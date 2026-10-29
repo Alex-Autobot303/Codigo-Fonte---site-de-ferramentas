@@ -64,7 +64,7 @@ export const fallbackStore = {
       amount: 250.0,
       kind: "recarga",
       description: "Recarga inicial PIX B2B",
-      orderId: null,
+      orderId: null as string | null,
       createdAt: new Date().toISOString(),
     },
   ],
@@ -167,11 +167,13 @@ async function authenticateRequest(request: Request): Promise<{ error?: Response
 
   // 1. Try querying Supabase
   try {
-    const { data: keyRecord, error: keyErr } = await supabase
-      .from("reseller_api_keys" as any)
+    const { data: keyData, error: keyErr } = await (supabase
+      .from("reseller_api_keys" as any) as any)
       .select("id, reseller_id, key_prefix, status, permissions, rate_limit, reseller_accounts(id, user_id, status, company_name)")
       .eq("key_hash", keyHash)
       .maybeSingle();
+
+    const keyRecord: any = keyData;
 
     if (!keyErr && keyRecord) {
       if (keyRecord.status !== "active") {
@@ -647,7 +649,7 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
 
   // 8. GET /wallet/deposits/:id
   const depositMatch = endpoint.match(/^\/wallet\/deposits\/([^/]+)$/);
-  if (depositMatch && request.method === "GET") {
+  if (depositMatch && depositMatch[1] && request.method === "GET") {
     const depId = depositMatch[1];
     const dep = fallbackStore.deposits.get(depId);
     if (!dep) {
@@ -658,7 +660,7 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
 
   // 8b. POST /wallet/deposits/:id/simulate-pay (Useful for sandbox testing)
   const simPayMatch = endpoint.match(/^\/wallet\/deposits\/([^/]+)\/simulate-pay$/);
-  if (simPayMatch && request.method === "POST") {
+  if (simPayMatch && simPayMatch[1] && request.method === "POST") {
     const depId = simPayMatch[1];
     const dep = fallbackStore.deposits.get(depId);
     if (!dep) {
@@ -738,7 +740,7 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
             price: Number(dbP.promo_price || dbP.price),
             retail_price: Number(dbP.price),
             available: dbP.active,
-            stock: dbP.stock,
+            stock: dbP.stock ?? 0,
             delivery_type: dbP.delivery_type,
             short_description: dbP.short_description || "",
           };
@@ -890,7 +892,7 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
 
   // 11. GET /orders/:id
   const singleOrderMatch = endpoint.match(/^\/orders\/([^/]+)$/);
-  if (singleOrderMatch && request.method === "GET") {
+  if (singleOrderMatch && singleOrderMatch[1] && request.method === "GET") {
     const ordId = singleOrderMatch[1];
     const ord = fallbackStore.orders.get(ordId);
     if (!ord || ord.resellerId !== ctx.resellerId) {
@@ -902,7 +904,7 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
 
   // 12. GET /orders/:id/delivery: Consultar chave de licença / links
   const deliveryMatch = endpoint.match(/^\/orders\/([^/]+)\/delivery$/);
-  if (deliveryMatch && request.method === "GET") {
+  if (deliveryMatch && deliveryMatch[1] && request.method === "GET") {
     const ordId = deliveryMatch[1];
     const ord = fallbackStore.orders.get(ordId);
     if (!ord || ord.resellerId !== ctx.resellerId) {
@@ -933,7 +935,7 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
 
   // 13. POST /orders/:id/refund-requests: Solicitar reembolso
   const refundMatch = endpoint.match(/^\/orders\/([^/]+)\/refund-requests$/);
-  if (refundMatch && request.method === "POST") {
+  if (refundMatch && refundMatch[1] && request.method === "POST") {
     const ordId = refundMatch[1];
     const ord = fallbackStore.orders.get(ordId);
     if (!ord || ord.resellerId !== ctx.resellerId) {

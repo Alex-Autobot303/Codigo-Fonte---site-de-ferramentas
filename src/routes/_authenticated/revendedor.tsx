@@ -458,7 +458,7 @@ function ResellerDashboardPage() {
                       <div key={t.id} className="py-3 flex items-center justify-between">
                         <div>
                           <div className="font-medium">{t.description}</div>
-                          <div className="text-[11px] text-muted-foreground">{new Date(t.createdAt || t.created_at).toLocaleString()}</div>
+                          <div className="text-[11px] text-muted-foreground">{new Date(t.createdAt || (t as any).created_at).toLocaleString()}</div>
                         </div>
                         <div className={`font-mono font-bold ${t.amount >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                           {t.amount >= 0 ? `+ R$ ${t.amount.toFixed(2)}` : `- R$ ${Math.abs(t.amount).toFixed(2)}`}
@@ -738,7 +738,7 @@ function ResellerDashboardPage() {
                     <div key={t.id} className="py-3 flex items-center justify-between">
                       <div>
                         <div className="font-semibold">{t.description}</div>
-                        <div className="text-[11px] text-muted-foreground">{new Date(t.createdAt || t.created_at).toLocaleString()}</div>
+                        <div className="text-[11px] text-muted-foreground">{new Date(t.createdAt || (t as any).created_at).toLocaleString()}</div>
                       </div>
                       <div className={`font-mono font-bold ${t.amount >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                         {t.amount >= 0 ? `+ R$ ${t.amount.toFixed(2)}` : `- R$ ${Math.abs(t.amount).toFixed(2)}`}
