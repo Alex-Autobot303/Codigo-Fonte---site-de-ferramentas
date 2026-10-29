@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793236687815,
+      "tag": "0000_ecommerce_core",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793236735438,
+      "tag": "0001_product_delivery_files",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793237686756,
+      "tag": "0002_product_images_policies",
+      "breakpoints": true
+    }
+  ]
+}
