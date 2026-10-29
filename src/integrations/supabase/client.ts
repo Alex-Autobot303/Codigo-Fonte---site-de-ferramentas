@@ -50,11 +50,7 @@ function createSupabaseClient() {
   // Use import.meta.env for client-side (Vite build-time replacement)
   // Fall back to process.env for SSR (server-side rendering)
   const SUPABASE_URL = import.meta.env['VITE_SUPABASE_URL'] || process.env['SUPABASE_URL'] || 'https://sgaiyijnaswhwwwvikff.supabase.co';
-  const SUPABASE_PUBLISHABLE_KEY = import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] || process.env['SUPABASE_PUBLISHABLE_KEY'] || 'sb_publishable_placeholder';
-
-  if (!import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] && !process.env['SUPABASE_PUBLISHABLE_KEY']) {
-    console.warn('[Supabase] Chave anon não configurada nas variáveis de ambiente da Vercel. Adicione VITE_SUPABASE_PUBLISHABLE_KEY nas configurações.');
-  }
+  const SUPABASE_PUBLISHABLE_KEY = import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'] || process.env['SUPABASE_PUBLISHABLE_KEY'] || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNnYWl5aWpuYXN3aHd3dndpa2ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNzkzOTEsImV4cCI6MjEwODg1NTM5MX0.jitFDWtNevxVa-BEkCuvHXM7GE0sqJ9eWgEx-tCxmd4';
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     global: {
