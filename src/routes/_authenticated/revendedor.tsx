@@ -40,8 +40,7 @@ import {
   type ResellerApiKey,
   type B2BDashboardMetrics,
 } from "@/lib/b2b-client";
-import { fallbackStore } from "@/lib/api-router";
-import { isSafeWebhookUrl } from "@/lib/b2b-security";
+
 
 export const Route = createFileRoute("/_authenticated/revendedor")({
   head: () => ({
