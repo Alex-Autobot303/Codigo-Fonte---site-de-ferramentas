@@ -1,4 +1,4 @@
-﻿
+
 create type public.app_role as enum ('admin','user');
 create type public.order_status as enum ('pendente','pago','entregue','cancelado','reembolsado');
 create type public.delivery_type as enum ('licenca','arquivo','manual');
@@ -549,6 +549,9 @@ begin
   end if;
 end $$;
 revoke execute on function public.finalize_paid_order(uuid) from public, anon, authenticated;
+
+-- STORAGE BUCKET FOR PRODUCT IMAGES
+insert into storage.buckets (id, name, public) values ('product-images', 'product-images', true) on conflict (id) do nothing;
 create policy "read product images" on storage.objects for select to anon, authenticated using (bucket_id = 'product-images');
 create policy "admin upload product images" on storage.objects for insert to authenticated with check (bucket_id = 'product-images' and public.has_role(auth.uid(),'admin'));
 create policy "admin update product images" on storage.objects for update to authenticated using (bucket_id = 'product-images' and public.has_role(auth.uid(),'admin'));
