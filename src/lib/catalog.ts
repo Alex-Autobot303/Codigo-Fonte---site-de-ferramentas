@@ -33,9 +33,17 @@ export const productsQuery = () =>
   queryOptions({
     queryKey: ["products"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("products").select(PRODUCT_COLS).eq("active", true).order("name");
-      if (error) throw error;
-      return (data ?? []) as unknown as Product[];
+      try {
+        const { data, error } = await supabase.from("products").select(PRODUCT_COLS).eq("active", true).order("name");
+        if (error) {
+          console.warn("[catalog] products query warning:", error);
+          return [];
+        }
+        return (data ?? []) as unknown as Product[];
+      } catch (err) {
+        console.warn("[catalog] products catch:", err);
+        return [];
+      }
     },
   });
 
@@ -43,9 +51,17 @@ export const categoriesQuery = () =>
   queryOptions({
     queryKey: ["categories"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("categories").select("*").order("sort_order");
-      if (error) throw error;
-      return data ?? [];
+      try {
+        const { data, error } = await supabase.from("categories").select("*").order("sort_order");
+        if (error) {
+          console.warn("[catalog] categories query warning:", error);
+          return [];
+        }
+        return data ?? [];
+      } catch (err) {
+        console.warn("[catalog] categories catch:", err);
+        return [];
+      }
     },
   });
 
@@ -53,9 +69,17 @@ export const settingsQuery = () =>
   queryOptions({
     queryKey: ["store_settings"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("store_settings").select("*").eq("id", 1).maybeSingle();
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase.from("store_settings").select("*").eq("id", 1).maybeSingle();
+        if (error) {
+          console.warn("[catalog] store_settings query warning:", error);
+          return null;
+        }
+        return data;
+      } catch (err) {
+        console.warn("[catalog] store_settings catch:", err);
+        return null;
+      }
     },
   });
 
