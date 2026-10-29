@@ -2,12 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import "@lovable.dev/cloud-auth-js/styles.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/lib/auth";
 import { errMsg } from "@/lib/format";
 
@@ -70,11 +68,6 @@ function AuthPage() {
     }
   };
 
-  const oauth = async (provider: "google" | "lovable") => {
-    sessionStorage.setItem("post-auth", safe(redirect));
-    const r = await lovable.auth.signInWithOAuth(provider, { redirect_uri: window.location.origin });
-    if (r.error) toast.error(errMsg(r.error));
-  };
 
   return (
     <div className="relative mx-auto flex max-w-md flex-col px-4 py-16">
@@ -99,15 +92,7 @@ function AuthPage() {
             {busy ? "Aguarde..." : mode === "login" ? "Entrar" : mode === "signup" ? "Criar conta" : "Enviar link"}
           </Button>
         </form>
-        {mode !== "forgot" && (
-          <>
-            <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />ou<span className="h-px flex-1 bg-border" /></div>
-            <div className="space-y-2">
-              <Button variant="glass" className="w-full" onClick={() => oauth("google")}>Continuar com Google</Button>
-              <button type="button" className="lovable-auth-button w-full" onClick={() => oauth("lovable")}>Continue with Lovable</button>
-            </div>
-          </>
-        )}
+
         <div className="mt-6 flex flex-col gap-2 text-center text-sm text-muted-foreground">
           {mode === "login" ? (
             <>

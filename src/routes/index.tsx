@@ -141,7 +141,7 @@ function Index() {
             ["Como recebo meu produto?", "Após a confirmação do pagamento, a entrega aparece em Minha conta → Downloads e licenças. Alguns produtos têm entrega manual pela nossa equipe."],
             ["Quais formas de pagamento são aceitas?", "Saldo da carteira digital e, em breve, PIX e cartão de crédito via Mercado Pago."],
             ["Posso pedir reembolso?", "Sim, conforme nossa política. Abra um chamado na central de suporte informando o número do pedido."],
-            ["Os preços exibidos são definitivos?", "Produtos marcados como “demo” ainda estão com preço de demonstração e serão atualizados pela loja."],
+            ["Os preços exibidos são definitivos?", "Sim! Nossos preços são atualizados em tempo real e você pode aproveitar ofertas especiais por tempo limitado."],
           ].map(([q, a]) => (
             <AccordionItem key={q} value={q ?? ""}>
               <AccordionTrigger className="text-left">{q}</AccordionTrigger>

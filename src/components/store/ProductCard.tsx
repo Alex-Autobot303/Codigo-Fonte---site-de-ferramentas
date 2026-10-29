@@ -41,7 +41,6 @@ export function ProductCard({ p }: { p: Product }) {
           {p.promo_price && <div className="text-xs text-muted-foreground line-through">{brl(p.price)}</div>}
           <div className="flex items-baseline gap-2">
             <span className="font-display text-2xl font-bold">{brl(finalPrice(p))}</span>
-            {p.demo_price && <span className="rounded bg-warning/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-warning">demo</span>}
           </div>
         </div>
         <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">

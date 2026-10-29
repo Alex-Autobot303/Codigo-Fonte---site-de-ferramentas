@@ -27,7 +27,7 @@ function DevelopersLandingPage() {
             Venda Produtos Digitais no seu <span className="bg-gradient-to-r from-violet via-fuchsia-400 to-primary bg-clip-text text-transparent">Próprio Sistema</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Conecte seus <strong>Bots do Telegram</strong>, <strong>WhatsApp</strong>, lojas no <strong>Lovable</strong>, aplicativos e plataformas SaaS à nossa infraestrutura de licenciamento e entrega automática instantânea.
+            Conecte seus <strong>Bots do Telegram</strong>, <strong>WhatsApp</strong>, <strong>Lojas Virtuais</strong>, aplicativos e plataformas SaaS à nossa infraestrutura de licenciamento e entrega automática instantânea.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -122,9 +122,9 @@ function DevelopersLandingPage() {
               <div className="grid h-12 w-12 place-items-center rounded-xl bg-fuchsia-500/15 text-fuchsia-400">
                 <Sparkles className="h-6 w-6" />
               </div>
-              <h3 className="mt-4 font-semibold text-lg">Lojas no Lovable</h3>
+              <h3 className="mt-4 font-semibold text-lg">Lojas e Plataformas Web</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Conecte seu front-end criado no Lovable ou Next.js diretamente aos endpoints REST B2B com total segurança.
+                Conecte seu front-end criado em React, Next.js ou qualquer plataforma diretamente aos endpoints REST B2B com total segurança.
               </p>
             </div>
           </div>

@@ -97,7 +97,6 @@ function ProductPage() {
             {p.promo_price && <div className="text-sm text-muted-foreground line-through">{brl(p.price)}</div>}
             <div className="flex flex-wrap items-center gap-3">
               <span className="font-display text-4xl font-bold">{brl(finalPrice(p))}</span>
-              {p.demo_price && <span className="rounded bg-warning/15 px-2 py-0.5 text-xs font-semibold text-warning">Preço de demonstração</span>}
             </div>
             {p.promo_price && p.promo_ends_at && (
               <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">Oferta termina em <Countdown to={p.promo_ends_at} /></div>
