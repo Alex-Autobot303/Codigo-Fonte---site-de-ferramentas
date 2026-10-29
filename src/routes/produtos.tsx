@@ -15,7 +15,10 @@ export const Route = createFileRoute("/produtos")({
   head: () => ({
     meta: [
       { title: "Catálogo de produtos — NexaTools" },
-      { name: "description", content: "Explore automações, ferramentas de prospecção, IA e marketing digital." },
+      {
+        name: "description",
+        content: "Explore automações, ferramentas de prospecção, IA e marketing digital.",
+      },
       { property: "og:title", content: "Catálogo de produtos — NexaTools" },
       { property: "og:description", content: "Todas as ferramentas digitais em um só lugar." },
     ],
@@ -30,9 +33,19 @@ function Catalog() {
   const navigate = useNavigate({ from: "/produtos" });
   const cat = cats.find((c) => c.slug === categoria);
 
-  let list = products.filter((p) => (!cat || p.category_id === cat.id) && (!q || `${p.name} ${p.short_description}`.toLowerCase().includes(q.toLowerCase())));
+  let list = products.filter(
+    (p) =>
+      (!cat || p.category_id === cat.id) &&
+      (!q || `${p.name} ${p.short_description}`.toLowerCase().includes(q.toLowerCase())),
+  );
   list = [...list].sort((a, b) =>
-    ordem === "menor" ? finalPrice(a) - finalPrice(b) : ordem === "maior" ? finalPrice(b) - finalPrice(a) : ordem === "vendidos" ? b.sales_count - a.sales_count : a.name.localeCompare(b.name),
+    ordem === "menor"
+      ? finalPrice(a) - finalPrice(b)
+      : ordem === "maior"
+        ? finalPrice(b) - finalPrice(a)
+        : ordem === "vendidos"
+          ? b.sales_count - a.sales_count
+          : a.name.localeCompare(b.name),
   );
 
   const chip = (active: boolean) =>
@@ -40,12 +53,23 @@ function Catalog() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
-      <h1 className="text-3xl font-bold">{cat?.name ?? (q ? `Resultados para “${q}”` : "Todos os produtos")}</h1>
+      <h1 className="text-3xl font-bold">
+        {cat?.name ?? (q ? `Resultados para “${q}”` : "Todos os produtos")}
+      </h1>
       {cat?.description && <p className="mt-1 text-muted-foreground">{cat.description}</p>}
       <div className="mt-6 flex flex-wrap items-center gap-2">
-        <Link to="/produtos" search={{ q }} className={chip(!cat)}>Todos</Link>
+        <Link to="/produtos" search={{ q }} className={chip(!cat)}>
+          Todos
+        </Link>
         {cats.map((c) => (
-          <Link key={c.id} to="/produtos" search={{ q, categoria: c.slug }} className={chip(cat?.id === c.id)}>{c.name}</Link>
+          <Link
+            key={c.id}
+            to="/produtos"
+            search={{ q, categoria: c.slug }}
+            className={chip(cat?.id === c.id)}
+          >
+            {c.name}
+          </Link>
         ))}
         <select
           value={ordem}
@@ -64,7 +88,9 @@ function Catalog() {
         <p className="mt-10 text-muted-foreground">Nenhum produto encontrado.</p>
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {list.map((p) => <ProductCard key={p.id} p={p} />)}
+          {list.map((p) => (
+            <ProductCard key={p.id} p={p} />
+          ))}
         </div>
       )}
     </div>

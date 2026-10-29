@@ -17,7 +17,8 @@ export const Route = createFileRoute("/termos")({
       <div className="mx-auto max-w-3xl px-4 py-12">
         <h1 className="text-3xl font-bold">Termos de uso</h1>
         <p className="mt-6 whitespace-pre-line text-muted-foreground">
-          {data?.terms || "Os termos de uso ainda não foram publicados pela loja. O administrador pode editá-los em Painel administrativo → Configurações."}
+          {data?.terms ||
+            "Os termos de uso ainda não foram publicados pela loja. O administrador pode editá-los em Painel administrativo → Configurações."}
         </p>
       </div>
     );

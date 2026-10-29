@@ -1,9 +1,24 @@
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
-import { Download, Headphones, Heart, KeyRound, LayoutDashboard, LogOut, Package, Settings, Wallet } from "lucide-react";
+import {
+  Download,
+  Headphones,
+  Heart,
+  KeyRound,
+  LayoutDashboard,
+  LogOut,
+  Package,
+  Settings,
+  Wallet,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/conta")({
-  head: () => ({ meta: [{ title: "Minha conta — NexaTools" }, { name: "description", content: "Painel do cliente." }] }),
+  head: () => ({
+    meta: [
+      { title: "Minha conta — NexaTools" },
+      { name: "description", content: "Painel do cliente." },
+    ],
+  }),
   component: AccountLayout,
 });
 
@@ -24,18 +39,29 @@ function AccountLayout() {
     <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[240px_1fr]">
       <aside className="flex gap-1 overflow-x-auto lg:flex-col">
         {links.map((l) => (
-          <Link key={l.to} to={l.to} activeOptions={{ exact: "exact" in l }}
+          <Link
+            key={l.to}
+            to={l.to}
+            activeOptions={{ exact: "exact" in l }}
             className="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition hover:bg-card hover:text-foreground"
-            activeProps={{ className: "bg-primary/15 !text-primary" }}>
+            activeProps={{ className: "bg-primary/15 !text-primary" }}
+          >
             <l.icon className="h-4 w-4" /> {l.label}
           </Link>
         ))}
-        <button onClick={async () => { await supabase.auth.signOut(); navigate({ to: "/" }); }}
-          className="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:text-destructive">
+        <button
+          onClick={async () => {
+            await supabase.auth.signOut();
+            navigate({ to: "/" });
+          }}
+          className="flex items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm text-muted-foreground hover:text-destructive"
+        >
           <LogOut className="h-4 w-4" /> Sair
         </button>
       </aside>
-      <section className="min-w-0"><Outlet /></section>
+      <section className="min-w-0">
+        <Outlet />
+      </section>
     </div>
   );
 }

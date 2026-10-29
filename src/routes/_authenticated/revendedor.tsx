@@ -30,6 +30,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { fallbackStore } from "@/lib/api-router";
+import { isSafeWebhookUrl } from "@/lib/b2b-security";
 import {
   getOrCreateResellerAccount,
   getB2BDashboardMetrics,
@@ -41,18 +43,21 @@ import {
   type B2BDashboardMetrics,
 } from "@/lib/b2b-client";
 
-
 export const Route = createFileRoute("/_authenticated/revendedor")({
   head: () => ({
     meta: [
       { title: "Painel do Revendedor — NexaTools B2B" },
-      { name: "description", content: "Área exclusiva para revendedores de produtos digitais e integração de API." },
+      {
+        name: "description",
+        content: "Área exclusiva para revendedores de produtos digitais e integração de API.",
+      },
     ],
   }),
   component: ResellerDashboardPage,
 });
 
-type TabKey = "overview" | "keys" | "catalog" | "wallet" | "orders" | "refunds" | "webhooks" | "logs";
+type TabKey =
+  "overview" | "keys" | "catalog" | "wallet" | "orders" | "refunds" | "webhooks" | "logs";
 
 function ResellerDashboardPage() {
   const { user } = useAuth();
@@ -70,7 +75,12 @@ function ResellerDashboardPage() {
 
   // PIX Topup Form
   const [depositAmount, setDepositAmount] = useState("100");
-  const [activePix, setActivePix] = useState<{ id: string; code: string; qrUrl: string; amount: number } | null>(null);
+  const [activePix, setActivePix] = useState<{
+    id: string;
+    code: string;
+    qrUrl: string;
+    amount: number;
+  } | null>(null);
   const [loadingDeposit, setLoadingDeposit] = useState(false);
 
   // Refund Form
@@ -106,7 +116,7 @@ function ResellerDashboardPage() {
 
       const k = await listApiKeys(acc.id);
       setKeys(k);
-    } catch (err: any) {
+    } catch {
       toast.error("Erro ao carregar dados do revendedor");
     } finally {
       setLoading(false);
@@ -135,7 +145,11 @@ function ResellerDashboardPage() {
   };
 
   const handleRevokeKey = async (keyId: string) => {
-    if (!confirm("Tem certeza que deseja revogar esta chave? Ela deixará de funcionar imediatamente em todos os bots e sistemas.")) {
+    if (
+      !confirm(
+        "Tem certeza que deseja revogar esta chave? Ela deixará de funcionar imediatamente em todos os bots e sistemas.",
+      )
+    ) {
       return;
     }
     const ok = await revokeApiKey(keyId);
@@ -193,7 +207,9 @@ function ResellerDashboardPage() {
       createdAt: new Date().toISOString(),
     });
 
-    toast.success(`Pagamento PIX de R$ ${activePix.amount.toFixed(2)} confirmado! Saldo creditado.`);
+    toast.success(
+      `Pagamento PIX de R$ ${activePix.amount.toFixed(2)} confirmado! Saldo creditado.`,
+    );
     setActivePix(null);
     loadData();
   };
@@ -210,7 +226,10 @@ function ResellerDashboardPage() {
     const r = fallbackStore.resellers.get(account.id);
     if (r) {
       r.webhookUrl = webhookUrl.trim() || undefined;
-      r.webhookSecret = webhookSecret.trim() || r.webhookSecret || `whsec_${Math.random().toString(36).substring(2, 16)}`;
+      r.webhookSecret =
+        webhookSecret.trim() ||
+        r.webhookSecret ||
+        `whsec_${Math.random().toString(36).substring(2, 16)}`;
       fallbackStore.resellers.set(account.id, r);
       setWebhookSecret(r.webhookSecret);
     }
@@ -277,16 +296,20 @@ function ResellerDashboardPage() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="rounded-full bg-violet/20 px-3 py-1 text-xs font-semibold text-violet">Área Exclusiva B2B</span>
+              <span className="rounded-full bg-violet/20 px-3 py-1 text-xs font-semibold text-violet">
+                Área Exclusiva B2B
+              </span>
               <span className="flex items-center gap-1 text-xs text-emerald-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> API Operacional (18ms)
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> API
+                Operacional (18ms)
               </span>
             </div>
             <h1 className="mt-2 font-display text-2xl font-bold lg:text-3xl">
               Painel do Revendedor — {account?.company_name || "NexaTools B2B"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Gerencie suas chaves de API, recarregue saldo, monitore pedidos de bots e acesse seu catálogo com preços de custo.
+              Gerencie suas chaves de API, recarregue saldo, monitore pedidos de bots e acesse seu
+              catálogo com preços de custo.
             </p>
           </div>
 
@@ -359,7 +382,8 @@ function ResellerDashboardPage() {
               <KeyRound className="h-4 w-4 text-amber-400" />
             </div>
             <div className="mt-2 text-2xl font-bold font-mono">
-              {metrics?.activeApiKeys || 0} <span className="text-xs font-normal text-muted-foreground">/ 5 máx</span>
+              {metrics?.activeApiKeys || 0}{" "}
+              <span className="text-xs font-normal text-muted-foreground">/ 5 máx</span>
             </div>
             <button
               onClick={() => setActiveTab("keys")}
@@ -409,13 +433,17 @@ function ResellerDashboardPage() {
                   <h3 className="font-semibold text-base flex items-center gap-2">
                     <ShoppingBag className="h-4 w-4 text-violet" /> Últimos Pedidos pela API
                   </h3>
-                  <button onClick={() => setActiveTab("orders")} className="text-xs text-violet hover:underline">
+                  <button
+                    onClick={() => setActiveTab("orders")}
+                    className="text-xs text-violet hover:underline"
+                  >
                     Ver todos
                   </button>
                 </div>
                 {ordersList.length === 0 ? (
                   <div className="py-8 text-center text-sm text-muted-foreground">
-                    Nenhum pedido realizado via API ainda. Conecte seu bot ou faça uma compra de teste.
+                    Nenhum pedido realizado via API ainda. Conecte seu bot ou faça uma compra de
+                    teste.
                   </div>
                 ) : (
                   <div className="mt-4 divide-y divide-border font-mono text-xs">
@@ -423,7 +451,9 @@ function ResellerDashboardPage() {
                       <div key={o.order_id} className="py-3 flex items-center justify-between">
                         <div>
                           <div className="font-bold text-foreground">{o.order_id}</div>
-                          <div className="text-muted-foreground font-sans text-xs">{o.product_name} (x{o.quantity})</div>
+                          <div className="text-muted-foreground font-sans text-xs">
+                            {o.product_name} (x{o.quantity})
+                          </div>
                         </div>
                         <div className="text-right">
                           <div className="text-emerald-400 font-bold">R$ {o.amount.toFixed(2)}</div>
@@ -443,7 +473,10 @@ function ResellerDashboardPage() {
                   <h3 className="font-semibold text-base flex items-center gap-2">
                     <Wallet className="h-4 w-4 text-emerald-400" /> Extrato Recente
                   </h3>
-                  <button onClick={() => setActiveTab("wallet")} className="text-xs text-violet hover:underline">
+                  <button
+                    onClick={() => setActiveTab("wallet")}
+                    className="text-xs text-violet hover:underline"
+                  >
                     Ver extrato
                   </button>
                 </div>
@@ -457,10 +490,16 @@ function ResellerDashboardPage() {
                       <div key={t.id} className="py-3 flex items-center justify-between">
                         <div>
                           <div className="font-medium">{t.description}</div>
-                          <div className="text-[11px] text-muted-foreground">{new Date(t.createdAt || (t as any).created_at).toLocaleString()}</div>
+                          <div className="text-[11px] text-muted-foreground">
+                            {new Date(t.createdAt).toLocaleString()}
+                          </div>
                         </div>
-                        <div className={`font-mono font-bold ${t.amount >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                          {t.amount >= 0 ? `+ R$ ${t.amount.toFixed(2)}` : `- R$ ${Math.abs(t.amount).toFixed(2)}`}
+                        <div
+                          className={`font-mono font-bold ${t.amount >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                        >
+                          {t.amount >= 0
+                            ? `+ R$ ${t.amount.toFixed(2)}`
+                            : `- R$ ${Math.abs(t.amount).toFixed(2)}`}
                         </div>
                       </div>
                     ))}
@@ -478,7 +517,8 @@ function ResellerDashboardPage() {
               <div>
                 <h2 className="font-display text-xl font-bold">Gerenciador de Chaves de Acesso</h2>
                 <p className="text-sm text-muted-foreground">
-                  Gere chaves seguras no formato <code className="text-violet">ak_live_...</code> para conectar bots e sistemas externos.
+                  Gere chaves seguras no formato <code className="text-violet">ak_live_...</code>{" "}
+                  para conectar bots e sistemas externos.
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -516,13 +556,19 @@ function ResellerDashboardPage() {
                     <tr key={k.id} className="hover:bg-card/60 transition">
                       <td className="p-4 font-semibold text-foreground">
                         {k.name}
-                        <div className="text-[11px] text-muted-foreground">Criada em {new Date(k.created_at).toLocaleDateString()}</div>
+                        <div className="text-[11px] text-muted-foreground">
+                          Criada em {new Date(k.created_at).toLocaleDateString()}
+                        </div>
                       </td>
                       <td className="p-4 font-mono text-xs text-slate-300">{k.key_prefix}</td>
                       <td className="p-4">
-                        <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                          k.status === "active" ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400"
-                        }`}>
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                            k.status === "active"
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : "bg-red-500/15 text-red-400"
+                          }`}
+                        >
                           {k.status === "active" ? "Ativa" : "Revogada"}
                         </span>
                       </td>
@@ -552,11 +598,15 @@ function ResellerDashboardPage() {
                 <div className="w-full max-w-lg rounded-3xl border border-violet/40 bg-slate-950 p-6 shadow-2xl space-y-4">
                   <div className="flex items-center gap-3 text-emerald-400">
                     <CheckCircle2 className="h-6 w-6" />
-                    <h3 className="font-display text-lg font-bold text-white">Chave de API Gerada com Sucesso</h3>
+                    <h3 className="font-display text-lg font-bold text-white">
+                      Chave de API Gerada com Sucesso
+                    </h3>
                   </div>
 
                   <p className="text-sm text-slate-300">
-                    Copie sua chave secreta agora. Por medidas de segurança criptográfica, ela é armazenada como hash SHA-256 e <strong>nunca mais será exibida integralmente</strong>.
+                    Copie sua chave secreta agora. Por medidas de segurança criptográfica, ela é
+                    armazenada como hash SHA-256 e{" "}
+                    <strong>nunca mais será exibida integralmente</strong>.
                   </p>
 
                   <div className="rounded-xl border border-border bg-slate-900 p-3 flex items-center justify-between">
@@ -572,7 +622,12 @@ function ResellerDashboardPage() {
                   </div>
 
                   <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
-                    Guarde este segredo em seu arquivo <code className="text-amber-300">.env</code> para autenticar chamadas via <code className="text-amber-300">Authorization: Bearer {generatedKey.slice(0, 15)}...</code>.
+                    Guarde este segredo em seu arquivo <code className="text-amber-300">.env</code>{" "}
+                    para autenticar chamadas via{" "}
+                    <code className="text-amber-300">
+                      Authorization: Bearer {generatedKey.slice(0, 15)}...
+                    </code>
+                    .
                   </div>
 
                   <div className="flex justify-end pt-2">
@@ -596,9 +651,12 @@ function ResellerDashboardPage() {
         {activeTab === "catalog" && (
           <div className="space-y-6">
             <div>
-              <h2 className="font-display text-xl font-bold">Catálogo de Produtos & Preço de Custo</h2>
+              <h2 className="font-display text-xl font-bold">
+                Catálogo de Produtos & Preço de Custo
+              </h2>
               <p className="text-sm text-muted-foreground">
-                Estes são os produtos digitais disponíveis para compra via API com seu preço de revenda aplicado.
+                Estes são os produtos digitais disponíveis para compra via API com seu preço de
+                revenda aplicado.
               </p>
             </div>
 
@@ -609,27 +667,42 @@ function ResellerDashboardPage() {
                 const profitMargin = p.retail_price - b2bCost;
 
                 return (
-                  <div key={p.id} className="rounded-2xl border border-border bg-card/40 p-5 space-y-3">
+                  <div
+                    key={p.id}
+                    className="rounded-2xl border border-border bg-card/40 p-5 space-y-3"
+                  >
                     <div className="flex items-center justify-between">
                       <span className="rounded-md bg-violet/15 px-2 py-0.5 text-[11px] font-semibold text-violet">
                         {p.category}
                       </span>
-                      <span className={`text-[11px] font-bold ${p.stock && p.stock > 0 ? "text-emerald-400" : "text-amber-400"}`}>
-                        {p.stock && p.stock > 0 ? `${p.stock} em estoque` : "Estoque Ilimitado / Sob Demanda"}
+                      <span
+                        className={`text-[11px] font-bold ${p.stock && p.stock > 0 ? "text-emerald-400" : "text-amber-400"}`}
+                      >
+                        {p.stock && p.stock > 0
+                          ? `${p.stock} em estoque`
+                          : "Estoque Ilimitado / Sob Demanda"}
                       </span>
                     </div>
 
                     <h3 className="font-bold text-base">{p.name}</h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{p.short_description}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {p.short_description}
+                    </p>
 
                     <div className="pt-2 border-t border-border/80 flex items-center justify-between">
                       <div>
-                        <div className="text-[11px] text-muted-foreground">Preço de Custo (B2B)</div>
-                        <div className="text-lg font-bold font-mono text-emerald-400">R$ {b2bCost.toFixed(2)}</div>
+                        <div className="text-[11px] text-muted-foreground">
+                          Preço de Custo (B2B)
+                        </div>
+                        <div className="text-lg font-bold font-mono text-emerald-400">
+                          R$ {b2bCost.toFixed(2)}
+                        </div>
                       </div>
                       <div className="text-right">
                         <div className="text-[11px] text-muted-foreground">Varejo Recomendado</div>
-                        <div className="text-sm font-mono text-muted-foreground line-through">R$ {p.retail_price.toFixed(2)}</div>
+                        <div className="text-sm font-mono text-muted-foreground line-through">
+                          R$ {p.retail_price.toFixed(2)}
+                        </div>
                       </div>
                     </div>
 
@@ -653,11 +726,14 @@ function ResellerDashboardPage() {
                   <QrCode className="h-5 w-5 text-emerald-400" /> Recarregar Saldo via PIX
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Informe o valor desejado. O sistema gerará o QR Code e código Copia e Cola instantâneo. Assim que confirmado, o saldo é liberado para a API.
+                  Informe o valor desejado. O sistema gerará o QR Code e código Copia e Cola
+                  instantâneo. Assim que confirmado, o saldo é liberado para a API.
                 </p>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-muted-foreground">Valor da Recarga (R$)</label>
+                  <label className="text-xs font-semibold text-muted-foreground">
+                    Valor da Recarga (R$)
+                  </label>
                   <div className="flex gap-2">
                     {["50", "100", "250", "500"].map((val) => (
                       <button
@@ -687,15 +763,23 @@ function ResellerDashboardPage() {
                   disabled={loadingDeposit}
                   className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-sm font-bold text-slate-950 shadow-glow hover:bg-emerald-400 transition"
                 >
-                  {loadingDeposit ? "Gerando cobrança PIX..." : `Gerar PIX de R$ ${parseFloat(depositAmount || "0").toFixed(2)}`}
+                  {loadingDeposit
+                    ? "Gerando cobrança PIX..."
+                    : `Gerar PIX de R$ ${parseFloat(depositAmount || "0").toFixed(2)}`}
                 </button>
 
                 {/* Active PIX QR Code & Simulation */}
                 {activePix && (
                   <div className="rounded-2xl border border-emerald-500/40 bg-slate-950 p-5 space-y-4 text-center">
-                    <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">PIX Pronto para Pagamento</span>
+                    <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+                      PIX Pronto para Pagamento
+                    </span>
                     <div className="mx-auto h-48 w-48 rounded-xl bg-white p-2 flex items-center justify-center">
-                      <img src={activePix.qrUrl} alt="QR Code PIX" className="h-full w-full object-contain" />
+                      <img
+                        src={activePix.qrUrl}
+                        alt="QR Code PIX"
+                        className="h-full w-full object-contain"
+                      />
                     </div>
 
                     <div className="space-y-2 text-left">
@@ -737,10 +821,16 @@ function ResellerDashboardPage() {
                     <div key={t.id} className="py-3 flex items-center justify-between">
                       <div>
                         <div className="font-semibold">{t.description}</div>
-                        <div className="text-[11px] text-muted-foreground">{new Date(t.createdAt || (t as any).created_at).toLocaleString()}</div>
+                        <div className="text-[11px] text-muted-foreground">
+                          {new Date(t.createdAt).toLocaleString()}
+                        </div>
                       </div>
-                      <div className={`font-mono font-bold ${t.amount >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                        {t.amount >= 0 ? `+ R$ ${t.amount.toFixed(2)}` : `- R$ ${Math.abs(t.amount).toFixed(2)}`}
+                      <div
+                        className={`font-mono font-bold ${t.amount >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                      >
+                        {t.amount >= 0
+                          ? `+ R$ ${t.amount.toFixed(2)}`
+                          : `- R$ ${Math.abs(t.amount).toFixed(2)}`}
                       </div>
                     </div>
                   ))}
@@ -756,7 +846,8 @@ function ResellerDashboardPage() {
             <div>
               <h2 className="font-display text-xl font-bold">Pedidos e Entregas Digitais</h2>
               <p className="text-sm text-muted-foreground">
-                Consulte todas as compras realizadas e veja as chaves de licença e links liberados para seus clientes.
+                Consulte todas as compras realizadas e veja as chaves de licença e links liberados
+                para seus clientes.
               </p>
             </div>
 
@@ -782,7 +873,9 @@ function ResellerDashboardPage() {
                       </td>
                       <td className="p-4">
                         <div className="rounded-lg bg-slate-950 p-2 font-mono text-xs text-emerald-300 flex items-center justify-between gap-2 max-w-xs">
-                          <span className="truncate">{o.delivery_content || "Processando entrega"}</span>
+                          <span className="truncate">
+                            {o.delivery_content || "Processando entrega"}
+                          </span>
                           {o.delivery_content && (
                             <button
                               onClick={() => copyText(o.delivery_content, o.order_id)}
@@ -794,7 +887,9 @@ function ResellerDashboardPage() {
                           )}
                         </div>
                       </td>
-                      <td className="p-4 font-mono text-xs text-muted-foreground">{o.external_order_id || "-"}</td>
+                      <td className="p-4 font-mono text-xs text-muted-foreground">
+                        {o.external_order_id || "-"}
+                      </td>
                       <td className="p-4 text-right text-xs text-muted-foreground">
                         {new Date(o.created_at).toLocaleDateString()}
                       </td>
@@ -815,12 +910,15 @@ function ResellerDashboardPage() {
                   <ShieldAlert className="h-5 w-5 text-amber-400" /> Solicitar Reembolso de Pedido
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Se um cliente do seu bot relatou problemas ou incompatibilidade, abra uma solicitação de reembolso informando o número do pedido.
+                  Se um cliente do seu bot relatou problemas ou incompatibilidade, abra uma
+                  solicitação de reembolso informando o número do pedido.
                 </p>
 
                 <form onSubmit={handleRequestRefund} className="space-y-4">
                   <div>
-                    <label className="text-xs font-semibold text-muted-foreground">Número do Pedido (ex: ORD-1025)</label>
+                    <label className="text-xs font-semibold text-muted-foreground">
+                      Número do Pedido (ex: ORD-1025)
+                    </label>
                     <input
                       value={refundOrderId}
                       onChange={(e) => setRefundOrderId(e.target.value)}
@@ -830,7 +928,9 @@ function ResellerDashboardPage() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-muted-foreground">Motivo do Reembolso</label>
+                    <label className="text-xs font-semibold text-muted-foreground">
+                      Motivo do Reembolso
+                    </label>
                     <textarea
                       value={refundReason}
                       onChange={(e) => setRefundReason(e.target.value)}
@@ -863,9 +963,13 @@ function ResellerDashboardPage() {
                       <div key={r.refund_id} className="py-3 space-y-1">
                         <div className="flex items-center justify-between font-mono">
                           <span className="font-bold text-violet">{r.order_id}</span>
-                          <span className={`rounded px-2 py-0.5 text-[10px] font-semibold ${
-                            r.status === "approved" ? "bg-emerald-500/15 text-emerald-400" : "bg-amber-500/15 text-amber-400"
-                          }`}>
+                          <span
+                            className={`rounded px-2 py-0.5 text-[10px] font-semibold ${
+                              r.status === "approved"
+                                ? "bg-emerald-500/15 text-emerald-400"
+                                : "bg-amber-500/15 text-amber-400"
+                            }`}
+                          >
                             {r.status === "approved" ? "Aprovado" : "Em Análise"}
                           </span>
                         </div>
@@ -887,11 +991,14 @@ function ResellerDashboardPage() {
                 <Globe className="h-5 w-5 text-violet" /> Configuração de Webhook
               </h3>
               <p className="text-sm text-muted-foreground">
-                Cadastre sua URL HTTPS para receber notificações automáticas de criação de pedidos e confirmação de recargas PIX.
+                Cadastre sua URL HTTPS para receber notificações automáticas de criação de pedidos e
+                confirmação de recargas PIX.
               </p>
 
               <div>
-                <label className="text-xs font-semibold text-muted-foreground">URL de Notificação (HTTPS obrigatório)</label>
+                <label className="text-xs font-semibold text-muted-foreground">
+                  URL de Notificação (HTTPS obrigatório)
+                </label>
                 <input
                   value={webhookUrl}
                   onChange={(e) => setWebhookUrl(e.target.value)}
@@ -901,7 +1008,9 @@ function ResellerDashboardPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-muted-foreground">Chave Secreta para Assinatura HMAC (whsec_...)</label>
+                <label className="text-xs font-semibold text-muted-foreground">
+                  Chave Secreta para Assinatura HMAC (whsec_...)
+                </label>
                 <input
                   value={webhookSecret}
                   onChange={(e) => setWebhookSecret(e.target.value)}
@@ -935,7 +1044,8 @@ function ResellerDashboardPage() {
             <div>
               <h2 className="font-display text-xl font-bold">Logs de Integração em Tempo Real</h2>
               <p className="text-sm text-muted-foreground">
-                Monitore cada requisição enviada pelo seu bot com códigos de status, tempos de resposta e identificadores.
+                Monitore cada requisição enviada pelo seu bot com códigos de status, tempos de
+                resposta e identificadores.
               </p>
             </div>
 
@@ -954,11 +1064,15 @@ function ResellerDashboardPage() {
                 <tbody className="divide-y divide-border font-mono text-xs">
                   {logsList.map((l) => (
                     <tr key={l.id} className="hover:bg-card/60 transition">
-                      <td className="p-3 text-muted-foreground">{new Date(l.created_at).toLocaleTimeString()}</td>
+                      <td className="p-3 text-muted-foreground">
+                        {new Date(l.created_at).toLocaleTimeString()}
+                      </td>
                       <td className="p-3 font-bold text-violet">{l.method}</td>
                       <td className="p-3 text-foreground">{l.endpoint}</td>
                       <td className="p-3">
-                        <span className={`font-bold ${l.status_code < 300 ? "text-emerald-400" : "text-amber-400"}`}>
+                        <span
+                          className={`font-bold ${l.status_code < 300 ? "text-emerald-400" : "text-amber-400"}`}
+                        >
                           {l.status_code}
                         </span>
                       </td>

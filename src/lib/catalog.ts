@@ -34,7 +34,11 @@ export const productsQuery = () =>
     queryKey: ["products"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from("products").select(PRODUCT_COLS).eq("active", true).order("name");
+        const { data, error } = await supabase
+          .from("products")
+          .select(PRODUCT_COLS)
+          .eq("active", true)
+          .order("name");
         if (error) {
           console.warn("[catalog] products query warning:", error);
           return [];
@@ -70,7 +74,11 @@ export const settingsQuery = () =>
     queryKey: ["store_settings"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from("store_settings").select("*").eq("id", 1).maybeSingle();
+        const { data, error } = await supabase
+          .from("store_settings")
+          .select("*")
+          .eq("id", 1)
+          .maybeSingle();
         if (error) {
           console.warn("[catalog] store_settings query warning:", error);
           return null;
@@ -83,4 +91,5 @@ export const settingsQuery = () =>
     },
   });
 
-export const finalPrice = (p: Pick<Product, "price" | "promo_price">) => Number(p.promo_price ?? p.price);
+export const finalPrice = (p: Pick<Product, "price" | "promo_price">) =>
+  Number(p.promo_price ?? p.price);

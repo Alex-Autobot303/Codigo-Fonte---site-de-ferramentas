@@ -16,9 +16,18 @@ export function Countdown({ to }: { to: string }) {
   const s = Math.floor((diff / 1000) % 60);
   const box = (v: number, l: string) => (
     <div className="flex flex-col items-center rounded-lg border border-violet/40 bg-violet/10 px-2.5 py-1">
-      <span className="font-display text-lg font-bold tabular-nums">{String(v).padStart(2, "0")}</span>
+      <span className="font-display text-lg font-bold tabular-nums">
+        {String(v).padStart(2, "0")}
+      </span>
       <span className="text-[10px] uppercase text-muted-foreground">{l}</span>
     </div>
   );
-  return <div className="flex gap-1.5">{box(d, "dias")}{box(h, "hrs")}{box(m, "min")}{box(s, "seg")}</div>;
+  return (
+    <div className="flex gap-1.5">
+      {box(d, "dias")}
+      {box(h, "hrs")}
+      {box(m, "min")}
+      {box(s, "seg")}
+    </div>
+  );
 }

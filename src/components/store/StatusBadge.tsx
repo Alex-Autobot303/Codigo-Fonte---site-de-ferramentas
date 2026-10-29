@@ -14,5 +14,9 @@ const tone: Record<string, string> = {
 };
 
 export function StatusBadge({ s }: { s: string }) {
-  return <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${tone[s] ?? "bg-muted"}`}>{statusLabel[s] ?? s}</span>;
+  return (
+    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${tone[s] ?? "bg-muted"}`}>
+      {statusLabel[s] ?? s}
+    </span>
+  );
 }

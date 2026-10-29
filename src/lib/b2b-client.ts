@@ -108,11 +108,18 @@ export async function getOrCreateResellerAccount(userId: string): Promise<Resell
 /**
  * Fetches dashboard statistics
  */
-export async function getB2BDashboardMetrics(resellerId: string, userId: string): Promise<B2BDashboardMetrics> {
+export async function getB2BDashboardMetrics(
+  resellerId: string,
+  userId: string,
+): Promise<B2BDashboardMetrics> {
   let balance = 0;
   // Get wallet
   try {
-    const { data: w } = await supabase.from("wallets").select("balance").eq("user_id", userId).maybeSingle();
+    const { data: w } = await supabase
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", userId)
+      .maybeSingle();
     if (w) balance = Number(w.balance);
   } catch {}
 
@@ -121,7 +128,9 @@ export async function getB2BDashboardMetrics(resellerId: string, userId: string)
   }
 
   // Get orders
-  const orders = Array.from(fallbackStore.orders.values()).filter((o) => o.resellerId === resellerId);
+  const orders = Array.from(fallbackStore.orders.values()).filter(
+    (o) => o.resellerId === resellerId,
+  );
   const orderCount = orders.length;
   const totalSpent = orders.reduce((acc, o) => acc + (o.amount || 0), 0);
 
@@ -174,7 +183,13 @@ export async function getB2BDashboardMetrics(resellerId: string, userId: string)
 export async function generateNewApiKey(
   resellerId: string,
   name: string,
-  permissions: string[] = ["read:products", "read:wallet", "write:orders", "read:orders", "read:deliveries"],
+  permissions: string[] = [
+    "read:products",
+    "read:wallet",
+    "write:orders",
+    "read:orders",
+    "read:deliveries",
+  ],
   rateLimit: number = 60,
 ): Promise<{ rawKey: string; keyRecord: ResellerApiKey }> {
   const { fullKey, keyPrefix, keyHash } = generateApiKey();

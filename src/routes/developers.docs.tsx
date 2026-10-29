@@ -21,13 +21,26 @@ export const Route = createFileRoute("/developers/docs")({
   head: () => ({
     meta: [
       { title: "Documentação da API B2B — NexaTools" },
-      { name: "description", content: "Referência completa dos endpoints, autenticação, carteira, compras, webhooks e exemplos em JS, TS, Python, PHP e cURL." },
+      {
+        name: "description",
+        content:
+          "Referência completa dos endpoints, autenticação, carteira, compras, webhooks e exemplos em JS, TS, Python, PHP e cURL.",
+      },
     ],
   }),
   component: ApiDocsPage,
 });
 
-type SectionKey = "intro" | "auth" | "products" | "wallet" | "orders" | "deliveries" | "webhooks" | "errors" | "playground";
+type SectionKey =
+  | "intro"
+  | "auth"
+  | "products"
+  | "wallet"
+  | "orders"
+  | "deliveries"
+  | "webhooks"
+  | "errors"
+  | "playground";
 type CodeLang = "curl" | "javascript" | "typescript" | "python" | "php";
 
 function ApiDocsPage() {
@@ -205,7 +218,9 @@ if ($httpCode === 201) {
       <div className="border-b border-border/40 bg-card/30 backdrop-blur px-4 py-3">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Link to="/developers" className="hover:text-foreground">Desenvolvedores</Link>
+            <Link to="/developers" className="hover:text-foreground">
+              Desenvolvedores
+            </Link>
             <span>/</span>
             <span className="font-semibold text-foreground">Documentação REST v1</span>
           </div>
@@ -268,7 +283,9 @@ if ($httpCode === 201) {
                 <div>
                   <h1 className="font-display text-3xl font-bold">Introdução à API B2B</h1>
                   <p className="mt-2 text-muted-foreground">
-                    A API B2B NexaTools permite que revendedores automatizem a compra e entrega de produtos digitais, licenças e ferramentas por meio de bots do Telegram, WhatsApp, lojas virtuais ou plataformas próprias.
+                    A API B2B NexaTools permite que revendedores automatizem a compra e entrega de
+                    produtos digitais, licenças e ferramentas por meio de bots do Telegram,
+                    WhatsApp, lojas virtuais ou plataformas próprias.
                   </p>
                 </div>
 
@@ -284,7 +301,11 @@ if ($httpCode === 201) {
                       className="text-slate-400 hover:text-white"
                       title="Copiar"
                     >
-                      {copiedKey === "base_url" ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                      {copiedKey === "base_url" ? (
+                        <Check className="h-4 w-4 text-emerald-400" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -312,7 +333,9 @@ if ($httpCode === 201) {
                 <div>
                   <h1 className="font-display text-3xl font-bold">Autenticação com API Key</h1>
                   <p className="mt-2 text-muted-foreground">
-                    A API utiliza chaves Bearer criptograficamente seguras. Para autenticar suas chamadas, inclua sua chave no cabeçalho HTTP <code className="text-violet">Authorization</code>.
+                    A API utiliza chaves Bearer criptograficamente seguras. Para autenticar suas
+                    chamadas, inclua sua chave no cabeçalho HTTP{" "}
+                    <code className="text-violet">Authorization</code>.
                   </p>
                 </div>
 
@@ -327,7 +350,11 @@ if ($httpCode === 201) {
                   <div className="flex items-start gap-3">
                     <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                     <div className="text-xs text-amber-200">
-                      <strong>Aviso de Segurança:</strong> Nunca compartilhe sua API Key em repositórios públicos de código ou no front-end de aplicações de clientes. Guarde-a sempre em variáveis de ambiente seguras (<code className="text-amber-300">process.env</code>, <code className="text-amber-300">os.environ</code>, etc.).
+                      <strong>Aviso de Segurança:</strong> Nunca compartilhe sua API Key em
+                      repositórios públicos de código ou no front-end de aplicações de clientes.
+                      Guarde-a sempre em variáveis de ambiente seguras (
+                      <code className="text-amber-300">process.env</code>,{" "}
+                      <code className="text-amber-300">os.environ</code>, etc.).
                     </div>
                   </div>
                 </div>
@@ -335,10 +362,23 @@ if ($httpCode === 201) {
                 <div className="space-y-2">
                   <h3 className="font-semibold text-lg">Como Obter sua Chave</h3>
                   <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-                    <li>Acesse o <Link to="/revendedor" className="text-violet underline">Painel do Revendedor</Link>.</li>
-                    <li>Vá até a aba <strong>API Keys</strong>.</li>
-                    <li>Clique em <strong>Gerar Nova API Key</strong>.</li>
-                    <li>Copie e guarde o segredo exibido imediatamente. Ele não poderá ser consultado novamente.</li>
+                    <li>
+                      Acesse o{" "}
+                      <Link to="/revendedor" className="text-violet underline">
+                        Painel do Revendedor
+                      </Link>
+                      .
+                    </li>
+                    <li>
+                      Vá até a aba <strong>API Keys</strong>.
+                    </li>
+                    <li>
+                      Clique em <strong>Gerar Nova API Key</strong>.
+                    </li>
+                    <li>
+                      Copie e guarde o segredo exibido imediatamente. Ele não poderá ser consultado
+                      novamente.
+                    </li>
                   </ol>
                 </div>
               </section>
@@ -350,7 +390,8 @@ if ($httpCode === 201) {
                 <div>
                   <h1 className="font-display text-3xl font-bold">Catálogo & Preços B2B</h1>
                   <p className="mt-2 text-muted-foreground">
-                    Consulte os produtos disponíveis para revenda, verifique o estoque em tempo real e descubra o preço de custo exclusivo negociado para sua conta.
+                    Consulte os produtos disponíveis para revenda, verifique o estoque em tempo real
+                    e descubra o preço de custo exclusivo negociado para sua conta.
                   </p>
                 </div>
 
@@ -358,16 +399,19 @@ if ($httpCode === 201) {
                   {/* GET /products */}
                   <div className="rounded-2xl border border-border bg-card/40 p-6">
                     <div className="flex items-center gap-3">
-                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">GET</span>
+                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">
+                        GET
+                      </span>
                       <span className="font-mono text-sm font-semibold">/products</span>
                     </div>
                     <p className="mt-3 text-sm text-muted-foreground">
-                      Retorna todo o catálogo de produtos digitais com os respectivos preços de custo calculados para o seu perfil.
+                      Retorna todo o catálogo de produtos digitais com os respectivos preços de
+                      custo calculados para o seu perfil.
                     </p>
                     <div className="mt-4 rounded-xl border border-border bg-slate-950 p-4">
                       <span className="text-xs font-mono text-slate-400">Exemplo de Resposta:</span>
                       <pre className="mt-2 overflow-x-auto font-mono text-xs text-slate-300">
-{`{
+                        {`{
   "success": true,
   "data": [
     {
@@ -392,19 +436,31 @@ if ($httpCode === 201) {
                   {/* GET /products/{id}/stock */}
                   <div className="rounded-2xl border border-border bg-card/40 p-6">
                     <div className="flex items-center gap-3">
-                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">GET</span>
-                      <span className="font-mono text-sm font-semibold">/products/{`{id}`}/stock</span>
+                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">
+                        GET
+                      </span>
+                      <span className="font-mono text-sm font-semibold">
+                        /products/{`{id}`}/stock
+                      </span>
                     </div>
-                    <p className="mt-2 text-sm text-muted-foreground">Consulta a quantidade em estoque e disponibilidade imediata do produto.</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Consulta a quantidade em estoque e disponibilidade imediata do produto.
+                    </p>
                   </div>
 
                   {/* GET /products/{id}/price */}
                   <div className="rounded-2xl border border-border bg-card/40 p-6">
                     <div className="flex items-center gap-3">
-                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">GET</span>
-                      <span className="font-mono text-sm font-semibold">/products/{`{id}`}/price</span>
+                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">
+                        GET
+                      </span>
+                      <span className="font-mono text-sm font-semibold">
+                        /products/{`{id}`}/price
+                      </span>
                     </div>
-                    <p className="mt-2 text-sm text-muted-foreground">Retorna o preço de custo unitário exclusivo da sua conta para este produto.</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Retorna o preço de custo unitário exclusivo da sua conta para este produto.
+                    </p>
                   </div>
                 </div>
               </section>
@@ -416,7 +472,8 @@ if ($httpCode === 201) {
                 <div>
                   <h1 className="font-display text-3xl font-bold">Carteira & Recargas PIX</h1>
                   <p className="mt-2 text-muted-foreground">
-                    Sua conta de revendedor opera em modelo pré-pago. As compras debitam automaticamente o saldo da sua carteira B2B.
+                    Sua conta de revendedor opera em modelo pré-pago. As compras debitam
+                    automaticamente o saldo da sua carteira B2B.
                   </p>
                 </div>
 
@@ -424,12 +481,16 @@ if ($httpCode === 201) {
                   {/* GET /wallet */}
                   <div className="rounded-2xl border border-border bg-card/40 p-6">
                     <div className="flex items-center gap-3">
-                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">GET</span>
+                      <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">
+                        GET
+                      </span>
                       <span className="font-mono text-sm font-semibold">/wallet</span>
                     </div>
-                    <p className="mt-2 text-sm text-muted-foreground">Consulta o saldo disponível atual.</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Consulta o saldo disponível atual.
+                    </p>
                     <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-950 p-4 font-mono text-xs text-emerald-400">
-{`{
+                      {`{
   "success": true,
   "data": {
     "reseller_id": "res_demo_1",
@@ -443,14 +504,16 @@ if ($httpCode === 201) {
                   {/* POST /wallet/deposits */}
                   <div className="rounded-2xl border border-border bg-card/40 p-6">
                     <div className="flex items-center gap-3">
-                      <span className="rounded-md bg-blue-500/15 px-2.5 py-1 font-mono text-xs font-bold text-blue-400">POST</span>
+                      <span className="rounded-md bg-blue-500/15 px-2.5 py-1 font-mono text-xs font-bold text-blue-400">
+                        POST
+                      </span>
                       <span className="font-mono text-sm font-semibold">/wallet/deposits</span>
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">
                       Gera uma cobrança PIX instantânea com código Copia e Cola e QR Code.
                     </p>
                     <pre className="mt-3 overflow-x-auto rounded-xl bg-slate-950 p-4 font-mono text-xs text-slate-300">
-{`// Payload
+                      {`// Payload
 { "amount": 100.00 }
 
 // Resposta 201 Created
@@ -482,24 +545,31 @@ if ($httpCode === 201) {
 
                 <div className="rounded-2xl border border-border bg-card/40 p-6">
                   <div className="flex items-center gap-3">
-                    <span className="rounded-md bg-blue-500/15 px-2.5 py-1 font-mono text-xs font-bold text-blue-400">POST</span>
+                    <span className="rounded-md bg-blue-500/15 px-2.5 py-1 font-mono text-xs font-bold text-blue-400">
+                      POST
+                    </span>
                     <span className="font-mono text-sm font-semibold">/orders</span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    Processa a compra de forma atômica debitando a carteira e liberando a entrega digital correspondente.
+                    Processa a compra de forma atômica debitando a carteira e liberando a entrega
+                    digital correspondente.
                   </p>
 
                   <div className="mt-4 rounded-xl border border-violet/30 bg-violet/10 p-4">
-                    <div className="font-semibold text-xs text-violet">Cabeçalho Recomendado: Idempotency-Key</div>
+                    <div className="font-semibold text-xs text-violet">
+                      Cabeçalho Recomendado: Idempotency-Key
+                    </div>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Envie um UUID aleatório no cabeçalho <code className="text-violet">Idempotency-Key</code> em cada compra para proteger contra repetição de cobranças se sua conexão oscilar.
+                      Envie um UUID aleatório no cabeçalho{" "}
+                      <code className="text-violet">Idempotency-Key</code> em cada compra para
+                      proteger contra repetição de cobranças se sua conexão oscilar.
                     </p>
                   </div>
 
                   <div className="mt-4">
                     <span className="text-xs font-mono text-slate-400">Exemplo de Requisição:</span>
                     <pre className="mt-2 overflow-x-auto rounded-xl bg-slate-950 p-4 font-mono text-xs text-slate-300">
-{`{
+                      {`{
   "product_id": "prod_001",
   "quantity": 1,
   "external_order_id": "meu_bot_telegram_#9841"
@@ -508,9 +578,11 @@ if ($httpCode === 201) {
                   </div>
 
                   <div className="mt-4">
-                    <span className="text-xs font-mono text-slate-400">Exemplo de Resposta (201 Created):</span>
+                    <span className="text-xs font-mono text-slate-400">
+                      Exemplo de Resposta (201 Created):
+                    </span>
                     <pre className="mt-2 overflow-x-auto rounded-xl bg-slate-950 p-4 font-mono text-xs text-emerald-400">
-{`{
+                      {`{
   "success": true,
   "data": {
     "order_id": "ORD-1025",
@@ -540,17 +612,22 @@ if ($httpCode === 201) {
                 <div>
                   <h1 className="font-display text-3xl font-bold">Entregas & Licenças Digitais</h1>
                   <p className="mt-2 text-muted-foreground">
-                    Consulte os produtos adquiridos, chaves de ativação, links temporários de download e instruções a qualquer momento.
+                    Consulte os produtos adquiridos, chaves de ativação, links temporários de
+                    download e instruções a qualquer momento.
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-border bg-card/40 p-6">
                   <div className="flex items-center gap-3">
-                    <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">GET</span>
-                    <span className="font-mono text-sm font-semibold">/orders/{`{id}`}/delivery</span>
+                    <span className="rounded-md bg-emerald-500/15 px-2.5 py-1 font-mono text-xs font-bold text-emerald-400">
+                      GET
+                    </span>
+                    <span className="font-mono text-sm font-semibold">
+                      /orders/{`{id}`}/delivery
+                    </span>
                   </div>
                   <pre className="mt-4 overflow-x-auto rounded-xl bg-slate-950 p-4 font-mono text-xs text-slate-300">
-{`{
+                    {`{
   "success": true,
   "data": {
     "order_id": "ORD-1025",
@@ -572,27 +649,35 @@ if ($httpCode === 201) {
                 <div>
                   <h1 className="font-display text-3xl font-bold">Webhooks & Assinatura HMAC</h1>
                   <p className="mt-2 text-muted-foreground">
-                    Receba notificações em tempo real sobre pedidos criados, entregas concluídas e confirmação de recargas PIX.
+                    Receba notificações em tempo real sobre pedidos criados, entregas concluídas e
+                    confirmação de recargas PIX.
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-border bg-card/40 p-6 space-y-4">
-                  <h3 className="font-semibold text-base">Cabeçalhos de Segurança Enviados nos Webhooks</h3>
+                  <h3 className="font-semibold text-base">
+                    Cabeçalhos de Segurança Enviados nos Webhooks
+                  </h3>
                   <div className="space-y-2 font-mono text-xs">
                     <div className="rounded-lg bg-slate-950 p-2.5 text-slate-300">
-                      <span className="text-violet">X-Reseller-Signature:</span> Assinatura HMAC-SHA256 do corpo da requisição usando seu segredo de webhook.
+                      <span className="text-violet">X-Reseller-Signature:</span> Assinatura
+                      HMAC-SHA256 do corpo da requisição usando seu segredo de webhook.
                     </div>
                     <div className="rounded-lg bg-slate-950 p-2.5 text-slate-300">
-                      <span className="text-violet">X-Reseller-Timestamp:</span> Timestamp Unix em milissegundos para evitar ataques de repetição.
+                      <span className="text-violet">X-Reseller-Timestamp:</span> Timestamp Unix em
+                      milissegundos para evitar ataques de repetição.
                     </div>
                     <div className="rounded-lg bg-slate-950 p-2.5 text-slate-300">
-                      <span className="text-violet">X-Reseller-Event-Id:</span> Identificador único do evento para deduplicação.
+                      <span className="text-violet">X-Reseller-Event-Id:</span> Identificador único
+                      do evento para deduplicação.
                     </div>
                   </div>
 
-                  <h4 className="font-semibold text-sm pt-2">Exemplo de Validação em Node.js (Crypto)</h4>
+                  <h4 className="font-semibold text-sm pt-2">
+                    Exemplo de Validação em Node.js (Crypto)
+                  </h4>
                   <pre className="overflow-x-auto rounded-xl bg-slate-950 p-4 font-mono text-xs text-slate-300">
-{`import crypto from "crypto";
+                    {`import crypto from "crypto";
 
 function verifyWebhook(rawBody, signature, secret) {
   const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
@@ -609,7 +694,8 @@ function verifyWebhook(rawBody, signature, secret) {
                 <div>
                   <h1 className="font-display text-3xl font-bold">Códigos de Erro & Status HTTP</h1>
                   <p className="mt-2 text-muted-foreground">
-                    A API B2B adota os padrões canônicos de códigos de status HTTP da especificação REST:
+                    A API B2B adota os padrões canônicos de códigos de status HTTP da especificação
+                    REST:
                   </p>
                 </div>
 
@@ -623,16 +709,76 @@ function verifyWebhook(rawBody, signature, secret) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border font-mono text-xs">
-                      <tr><td className="p-3 text-emerald-400 font-bold">200</td><td className="p-3">OK</td><td className="p-3 font-sans text-muted-foreground">Requisição processada com sucesso.</td></tr>
-                      <tr><td className="p-3 text-emerald-400 font-bold">201</td><td className="p-3">Created</td><td className="p-3 font-sans text-muted-foreground">Recurso criado (pedido ou recarga efetuada).</td></tr>
-                      <tr><td className="p-3 text-amber-400 font-bold">400</td><td className="p-3">Bad Request</td><td className="p-3 font-sans text-muted-foreground">Saldo insuficiente ou produto indisponível.</td></tr>
-                      <tr><td className="p-3 text-red-400 font-bold">401</td><td className="p-3">Unauthorized</td><td className="p-3 font-sans text-muted-foreground">API Key ausente ou inválida.</td></tr>
-                      <tr><td className="p-3 text-red-400 font-bold">403</td><td className="p-3">Forbidden</td><td className="p-3 font-sans text-muted-foreground">Chave revogada ou conta de revendedor suspensa.</td></tr>
-                      <tr><td className="p-3 text-amber-400 font-bold">404</td><td className="p-3">Not Found</td><td className="p-3 font-sans text-muted-foreground">Produto, pedido ou depósito não localizado.</td></tr>
-                      <tr><td className="p-3 text-blue-400 font-bold">409</td><td className="p-3">Conflict</td><td className="p-3 font-sans text-muted-foreground">Requisição duplicada já processada ou reembolso pendente.</td></tr>
-                      <tr><td className="p-3 text-amber-400 font-bold">422</td><td className="p-3">Unprocessable Entity</td><td className="p-3 font-sans text-muted-foreground">Dados inválidos (quantidade zerada, formato incorreto).</td></tr>
-                      <tr><td className="p-3 text-purple-400 font-bold">429</td><td className="p-3">Too Many Requests</td><td className="p-3 font-sans text-muted-foreground">Limite de requisições excedido (Rate limit 60 req/min).</td></tr>
-                      <tr><td className="p-3 text-red-500 font-bold">500</td><td className="p-3">Internal Server Error</td><td className="p-3 font-sans text-muted-foreground">Falha interna no servidor.</td></tr>
+                      <tr>
+                        <td className="p-3 text-emerald-400 font-bold">200</td>
+                        <td className="p-3">OK</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Requisição processada com sucesso.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-emerald-400 font-bold">201</td>
+                        <td className="p-3">Created</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Recurso criado (pedido ou recarga efetuada).
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-amber-400 font-bold">400</td>
+                        <td className="p-3">Bad Request</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Saldo insuficiente ou produto indisponível.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-red-400 font-bold">401</td>
+                        <td className="p-3">Unauthorized</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          API Key ausente ou inválida.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-red-400 font-bold">403</td>
+                        <td className="p-3">Forbidden</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Chave revogada ou conta de revendedor suspensa.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-amber-400 font-bold">404</td>
+                        <td className="p-3">Not Found</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Produto, pedido ou depósito não localizado.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-blue-400 font-bold">409</td>
+                        <td className="p-3">Conflict</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Requisição duplicada já processada ou reembolso pendente.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-amber-400 font-bold">422</td>
+                        <td className="p-3">Unprocessable Entity</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Dados inválidos (quantidade zerada, formato incorreto).
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-purple-400 font-bold">429</td>
+                        <td className="p-3">Too Many Requests</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Limite de requisições excedido (Rate limit 60 req/min).
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 text-red-500 font-bold">500</td>
+                        <td className="p-3">Internal Server Error</td>
+                        <td className="p-3 font-sans text-muted-foreground">
+                          Falha interna no servidor.
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -664,38 +810,56 @@ function verifyWebhook(rawBody, signature, secret) {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="text-xs font-semibold text-muted-foreground">Endpoint</label>
+                      <label className="text-xs font-semibold text-muted-foreground">
+                        Endpoint
+                      </label>
                       <select
                         value={testEndpoint}
                         onChange={(e) => setTestEndpoint(e.target.value)}
                         className="mt-1 w-full rounded-xl border border-border bg-background p-2.5 text-sm font-mono"
                       >
                         <option value="/api/v1/products">GET /api/v1/products</option>
-                        <option value="/api/v1/products/prod_001">GET /api/v1/products/prod_001</option>
-                        <option value="/api/v1/products/prod_001/stock">GET /api/v1/products/prod_001/stock</option>
-                        <option value="/api/v1/products/prod_001/price">GET /api/v1/products/prod_001/price</option>
+                        <option value="/api/v1/products/prod_001">
+                          GET /api/v1/products/prod_001
+                        </option>
+                        <option value="/api/v1/products/prod_001/stock">
+                          GET /api/v1/products/prod_001/stock
+                        </option>
+                        <option value="/api/v1/products/prod_001/price">
+                          GET /api/v1/products/prod_001/price
+                        </option>
                         <option value="/api/v1/wallet">GET /api/v1/wallet</option>
-                        <option value="/api/v1/wallet/transactions">GET /api/v1/wallet/transactions</option>
+                        <option value="/api/v1/wallet/transactions">
+                          GET /api/v1/wallet/transactions
+                        </option>
                         <option value="/api/v1/orders">GET /api/v1/orders</option>
                         <option value="/api/v1/orders">POST /api/v1/orders (Comprar)</option>
-                        <option value="/api/v1/wallet/deposits">POST /api/v1/wallet/deposits (Recarregar PIX)</option>
+                        <option value="/api/v1/wallet/deposits">
+                          POST /api/v1/wallet/deposits (Recarregar PIX)
+                        </option>
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-muted-foreground">API Key de Teste</label>
+                    <label className="text-xs font-semibold text-muted-foreground">
+                      API Key de Teste
+                    </label>
                     <input
                       value={testKey}
                       onChange={(e) => setTestKey(e.target.value)}
                       className="mt-1 w-full rounded-xl border border-border bg-background p-2.5 font-mono text-sm"
                     />
-                    <span className="text-[11px] text-muted-foreground">Chave de demonstração pré-configurada com R$ 250,00 de saldo.</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      Chave de demonstração pré-configurada com R$ 250,00 de saldo.
+                    </span>
                   </div>
 
                   {testMethod === "POST" && (
                     <div>
-                      <label className="text-xs font-semibold text-muted-foreground">Corpo da Requisição (JSON)</label>
+                      <label className="text-xs font-semibold text-muted-foreground">
+                        Corpo da Requisição (JSON)
+                      </label>
                       <textarea
                         value={testBody}
                         onChange={(e) => setTestBody(e.target.value)}
@@ -710,14 +874,17 @@ function verifyWebhook(rawBody, signature, secret) {
                     disabled={loadingTest}
                     className="inline-flex items-center gap-2 rounded-xl bg-violet px-5 py-2.5 text-sm font-semibold text-white shadow-glow transition hover:opacity-90 disabled:opacity-50"
                   >
-                    <Play className="h-4 w-4" /> {loadingTest ? "Executando requisição..." : "Executar Chamada"}
+                    <Play className="h-4 w-4" />{" "}
+                    {loadingTest ? "Executando requisição..." : "Executar Chamada"}
                   </button>
 
                   {testStatus !== null && (
                     <div className="mt-6 rounded-2xl border border-border bg-slate-950 p-4">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-2 text-xs">
                         <span className="font-mono text-slate-400">Resposta do Servidor:</span>
-                        <span className={`font-mono font-bold ${testStatus >= 200 && testStatus < 300 ? "text-emerald-400" : "text-amber-400"}`}>
+                        <span
+                          className={`font-mono font-bold ${testStatus >= 200 && testStatus < 300 ? "text-emerald-400" : "text-amber-400"}`}
+                        >
                           HTTP {testStatus}
                         </span>
                       </div>
@@ -738,17 +905,21 @@ function verifyWebhook(rawBody, signature, secret) {
                   <span>Exemplo de Código Completo para sua Aplicação:</span>
                 </div>
                 <div className="flex gap-1 overflow-x-auto">
-                  {(["curl", "javascript", "typescript", "python", "php"] as CodeLang[]).map((lang) => (
-                    <button
-                      key={lang}
-                      onClick={() => setActiveLang(lang)}
-                      className={`rounded-lg px-2.5 py-1 font-mono text-xs font-semibold transition ${
-                        activeLang === lang ? "bg-violet text-white" : "text-slate-400 hover:text-white"
-                      }`}
-                    >
-                      {lang.toUpperCase()}
-                    </button>
-                  ))}
+                  {(["curl", "javascript", "typescript", "python", "php"] as CodeLang[]).map(
+                    (lang) => (
+                      <button
+                        key={lang}
+                        onClick={() => setActiveLang(lang)}
+                        className={`rounded-lg px-2.5 py-1 font-mono text-xs font-semibold transition ${
+                          activeLang === lang
+                            ? "bg-violet text-white"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        {lang.toUpperCase()}
+                      </button>
+                    ),
+                  )}
                 </div>
               </div>
 
@@ -758,7 +929,11 @@ function verifyWebhook(rawBody, signature, secret) {
                   className="absolute right-3 top-3 rounded-lg border border-slate-700 bg-slate-800/80 p-1.5 text-slate-300 hover:text-white"
                   title="Copiar Código"
                 >
-                  {copiedKey === "snippet" ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                  {copiedKey === "snippet" ? (
+                    <Check className="h-4 w-4 text-emerald-400" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
                 </button>
                 <pre className="overflow-x-auto p-2 font-mono text-xs text-slate-300">
                   <code>{codeSnippets[activeLang]}</code>

@@ -1,6 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { handleB2BApiRequest, fallbackStore } from "@/lib/api-router";
-import { generateApiKey, hashApiKey, generateWebhookSignature, verifyWebhookSignature, checkRateLimit } from "@/lib/b2b-security";
+import {
+  generateApiKey,
+  hashApiKey,
+  generateWebhookSignature,
+  verifyWebhookSignature,
+  checkRateLimit,
+} from "@/lib/b2b-security";
 
 describe("B2B Reseller API - Comprehensive Security & Functional Tests", () => {
   const validKey = "ak_live_test_valid_key_12345";
@@ -330,10 +336,13 @@ describe("B2B Reseller API - Comprehensive Security & Functional Tests", () => {
     expect(depBody.data.pix_code).toBeDefined();
 
     // Confirm deposit
-    const simReq = new Request(`https://example.com/api/v1/wallet/deposits/${depositId}/simulate-pay`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${validKey}` },
-    });
+    const simReq = new Request(
+      `https://example.com/api/v1/wallet/deposits/${depositId}/simulate-pay`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${validKey}` },
+      },
+    );
     const simRes = await handleB2BApiRequest(simReq);
     expect(simRes?.status).toBe(200);
 
@@ -343,7 +352,11 @@ describe("B2B Reseller API - Comprehensive Security & Functional Tests", () => {
 
   // 13. Assinatura de webhook HMAC-SHA256
   it("13. Assinatura HMAC-SHA256 é calculada e verificada com precisão", () => {
-    const payload = JSON.stringify({ event: "order.completed", order_id: "ORD-9999", amount: 45.0 });
+    const payload = JSON.stringify({
+      event: "order.completed",
+      order_id: "ORD-9999",
+      amount: 45.0,
+    });
     const secret = "whsec_super_secret_reseller_key";
 
     const signature = generateWebhookSignature(payload, secret);

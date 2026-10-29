@@ -33,7 +33,8 @@ export const openApiSpecification = {
         type: "apiKey",
         in: "header",
         name: "Idempotency-Key",
-        description: "Identificador único da requisição (ex: UUID) para evitar cobranças duplicadas em pedidos.",
+        description:
+          "Identificador único da requisição (ex: UUID) para evitar cobranças duplicadas em pedidos.",
       },
     },
     schemas: {
@@ -57,7 +58,11 @@ export const openApiSpecification = {
           currency: { type: "string", example: "BRL" },
           available: { type: "boolean", example: true },
           stock: { type: "integer", nullable: true, example: 50 },
-          delivery_type: { type: "string", enum: ["licenca", "arquivo", "manual"], example: "licenca" },
+          delivery_type: {
+            type: "string",
+            enum: ["licenca", "arquivo", "manual"],
+            example: "licenca",
+          },
           short_description: { type: "string", example: "Ferramenta de automação e envio" },
         },
       },
@@ -84,7 +89,11 @@ export const openApiSpecification = {
         properties: {
           id: { type: "string", format: "uuid" },
           amount: { type: "number", format: "float", example: -45.0 },
-          kind: { type: "string", enum: ["recarga", "compra", "reembolso", "ajuste"], example: "compra" },
+          kind: {
+            type: "string",
+            enum: ["recarga", "compra", "reembolso", "ajuste"],
+            example: "compra",
+          },
           description: { type: "string", example: "Compra B2B API - Pedido #1024" },
           order_id: { type: "string", format: "uuid", nullable: true },
           created_at: { type: "string", format: "date-time" },
@@ -94,7 +103,11 @@ export const openApiSpecification = {
         type: "object",
         required: ["product_id", "quantity"],
         properties: {
-          product_id: { type: "string", format: "uuid", example: "96d747f5-fd4d-49ff-a1b7-a8a25c1b6942" },
+          product_id: {
+            type: "string",
+            format: "uuid",
+            example: "96d747f5-fd4d-49ff-a1b7-a8a25c1b6942",
+          },
           quantity: { type: "integer", minimum: 1, maximum: 50, example: 1 },
           external_order_id: { type: "string", example: "meu_bot_telegram_#9841" },
         },
@@ -112,7 +125,11 @@ export const openApiSpecification = {
           amount: { type: "number", format: "float", example: 45.0 },
           currency: { type: "string", example: "BRL" },
           status: { type: "string", example: "completed" },
-          delivery_status: { type: "string", enum: ["completed", "pending", "failed"], example: "completed" },
+          delivery_status: {
+            type: "string",
+            enum: ["completed", "pending", "failed"],
+            example: "completed",
+          },
           delivery_type: { type: "string", example: "licenca" },
           created_at: { type: "string", format: "date-time" },
         },
@@ -122,10 +139,21 @@ export const openApiSpecification = {
         properties: {
           order_id: { type: "string", example: "ORD-1025" },
           delivery_type: { type: "string", example: "licenca" },
-          status: { type: "string", enum: ["aguardando", "entregue", "problema"], example: "entregue" },
+          status: {
+            type: "string",
+            enum: ["aguardando", "entregue", "problema"],
+            example: "entregue",
+          },
           content: { type: "string", example: "LICENSE-KEY-XXXX-YYYY-ZZZZ" },
-          download_url: { type: "string", nullable: true, example: "https://nexatools.com/download/temp-token-123" },
-          instructions: { type: "string", example: "Instale o executável e ative a licença fornecida." },
+          download_url: {
+            type: "string",
+            nullable: true,
+            example: "https://nexatools.com/download/temp-token-123",
+          },
+          instructions: {
+            type: "string",
+            example: "Instale o executável e ative a licença fornecida.",
+          },
           delivered_at: { type: "string", format: "date-time" },
         },
       },
@@ -143,7 +171,10 @@ export const openApiSpecification = {
           amount: { type: "number", example: 100.0 },
           status: { type: "string", enum: ["pending", "paid"], example: "pending" },
           pix_code: { type: "string", example: "00020126580014br.gov.bcb.pix0136..." },
-          pix_qr_url: { type: "string", example: "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=..." },
+          pix_qr_url: {
+            type: "string",
+            example: "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=...",
+          },
           created_at: { type: "string", format: "date-time" },
         },
       },
@@ -151,7 +182,10 @@ export const openApiSpecification = {
         type: "object",
         required: ["reason"],
         properties: {
-          reason: { type: "string", example: "Cliente final relatou incompatibilidade com sistema operacional." },
+          reason: {
+            type: "string",
+            example: "Cliente final relatou incompatibilidade com sistema operacional.",
+          },
         },
       },
     },
@@ -160,7 +194,8 @@ export const openApiSpecification = {
     "/products": {
       get: {
         summary: "Catálogo de Produtos para Revenda",
-        description: "Retorna a lista completa de produtos digitais com os preços de custo B2B aplicáveis à sua conta.",
+        description:
+          "Retorna a lista completa de produtos digitais com os preços de custo B2B aplicáveis à sua conta.",
         tags: ["Produtos"],
         responses: {
           "200": {
@@ -190,7 +225,13 @@ export const openApiSpecification = {
         summary: "Detalhes de um Produto",
         tags: ["Produtos"],
         parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" }, description: "ID ou slug do produto" },
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+            description: "ID ou slug do produto",
+          },
         ],
         responses: {
           "200": {
@@ -240,9 +281,7 @@ export const openApiSpecification = {
       get: {
         summary: "Consultar Estoque",
         tags: ["Produtos"],
-        parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
-        ],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
         responses: {
           "200": {
             description: "Disponibilidade de estoque",
@@ -273,9 +312,7 @@ export const openApiSpecification = {
       get: {
         summary: "Consultar Preço de Custo do Revendedor",
         tags: ["Produtos"],
-        parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
-        ],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
         responses: {
           "200": {
             description: "Preço de revenda específico",
@@ -383,9 +420,7 @@ export const openApiSpecification = {
       get: {
         summary: "Consultar Status de Recarga PIX",
         tags: ["Carteira & Pagamentos"],
-        parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
-        ],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
         responses: {
           "200": {
             description: "Status da recarga",
@@ -430,7 +465,8 @@ export const openApiSpecification = {
       },
       post: {
         summary: "Comprar Produto via API (Débito em Carteira)",
-        description: "Executa a compra imediata com débito atômico na carteira do revendedor e entrega digital instantânea.",
+        description:
+          "Executa a compra imediata com débito atômico na carteira do revendedor e entrega digital instantânea.",
         tags: ["Compras & Pedidos"],
         parameters: [
           {
@@ -473,9 +509,7 @@ export const openApiSpecification = {
       get: {
         summary: "Consultar Detalhes do Pedido",
         tags: ["Compras & Pedidos"],
-        parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
-        ],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
         responses: {
           "200": {
             description: "Detalhes do pedido",
@@ -498,9 +532,7 @@ export const openApiSpecification = {
       get: {
         summary: "Consultar Entrega do Pedido (Licenças/Downloads)",
         tags: ["Compras & Pedidos"],
-        parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
-        ],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
         responses: {
           "200": {
             description: "Dados de entrega digital",
@@ -523,9 +555,7 @@ export const openApiSpecification = {
       post: {
         summary: "Solicitar Reembolso de um Pedido",
         tags: ["Compras & Pedidos"],
-        parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
-        ],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
         requestBody: {
           required: true,
           content: {
@@ -581,12 +611,21 @@ export const openApiSpecification = {
                 type: "object",
                 required: ["url"],
                 properties: {
-                  url: { type: "string", format: "uri", example: "https://meubot.com/webhook/nexatools" },
+                  url: {
+                    type: "string",
+                    format: "uri",
+                    example: "https://meubot.com/webhook/nexatools",
+                  },
                   secret: { type: "string", example: "whsec_custom_secret_key" },
                   events: {
                     type: "array",
                     items: { type: "string" },
-                    example: ["order.created", "order.completed", "delivery.completed", "wallet.deposit.completed"],
+                    example: [
+                      "order.created",
+                      "order.completed",
+                      "delivery.completed",
+                      "wallet.deposit.completed",
+                    ],
                   },
                 },
               },

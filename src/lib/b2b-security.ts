@@ -29,7 +29,11 @@ export function generateWebhookSignature(payload: string, secret: string): strin
 /**
  * Verifies webhook HMAC-SHA256 signature against replay attacks.
  */
-export function verifyWebhookSignature(payload: string, secret: string, signature: string): boolean {
+export function verifyWebhookSignature(
+  payload: string,
+  secret: string,
+  signature: string,
+): boolean {
   try {
     const expected = generateWebhookSignature(payload, secret);
     return expected === signature;
@@ -63,7 +67,10 @@ export function isSafeWebhookUrl(urlString: string): { valid: boolean; reason?: 
       /^169\.254\./.test(host)
     ) {
       // In local dev we can allow localhost if needed, but per prompt master SSRF protection is required
-      return { valid: false, reason: "URLs internas e endereços locais não são permitidos por segurança (SSRF)" };
+      return {
+        valid: false,
+        reason: "URLs internas e endereços locais não são permitidos por segurança (SSRF)",
+      };
     }
 
     return { valid: true };
@@ -77,7 +84,10 @@ export function isSafeWebhookUrl(urlString: string): { valid: boolean; reason?: 
  */
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
-export function checkRateLimit(key: string, limitPerMinute: number = 60): { allowed: boolean; remaining: number; resetInSec: number } {
+export function checkRateLimit(
+  key: string,
+  limitPerMinute: number = 60,
+): { allowed: boolean; remaining: number; resetInSec: number } {
   const now = Date.now();
   const windowMs = 60 * 1000;
   const current = rateLimitMap.get(key);

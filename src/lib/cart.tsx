@@ -42,18 +42,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const add: CartCtx["add"] = (item, qty = 1) =>
     setItems((prev) => {
       const found = prev.find((i) => i.product_id === item.product_id);
-      if (found) return prev.map((i) => (i.product_id === item.product_id ? { ...i, quantity: Math.min(50, i.quantity + qty) } : i));
+      if (found)
+        return prev.map((i) =>
+          i.product_id === item.product_id ? { ...i, quantity: Math.min(50, i.quantity + qty) } : i,
+        );
       return [...prev, { ...item, quantity: qty }];
     });
   const setQty = (id: string, qty: number) =>
-    setItems((prev) => prev.map((i) => (i.product_id === id ? { ...i, quantity: Math.max(1, Math.min(50, qty)) } : i)));
+    setItems((prev) =>
+      prev.map((i) =>
+        i.product_id === id ? { ...i, quantity: Math.max(1, Math.min(50, qty)) } : i,
+      ),
+    );
   const remove = (id: string) => setItems((prev) => prev.filter((i) => i.product_id !== id));
   const clear = () => setItems([]);
 
   const count = items.reduce((s, i) => s + i.quantity, 0);
   const subtotal = items.reduce((s, i) => s + i.quantity * i.unit_price, 0);
 
-  return <Ctx.Provider value={{ items, add, setQty, remove, clear, count, subtotal }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ items, add, setQty, remove, clear, count, subtotal }}>
+      {children}
+    </Ctx.Provider>
+  );
 }
 
 export function useCart() {

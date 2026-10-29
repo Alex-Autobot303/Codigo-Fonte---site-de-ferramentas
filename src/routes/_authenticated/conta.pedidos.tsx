@@ -36,7 +36,9 @@ function Orders() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">Meus pedidos</h1>
-      {isLoading ? <p className="text-muted-foreground">Carregando...</p> : data.length === 0 ? (
+      {isLoading ? (
+        <p className="text-muted-foreground">Carregando...</p>
+      ) : data.length === 0 ? (
         <p className="text-muted-foreground">Você ainda não fez pedidos.</p>
       ) : (
         <div className="space-y-3">
@@ -50,18 +52,31 @@ function Orders() {
                 <StatusBadge s={o.status} />
               </div>
               <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
-                {o.order_items.map((i) => <li key={i.id}>{i.quantity}× {i.product_name} — {brl(i.unit_price)}</li>)}
+                {o.order_items.map((i) => (
+                  <li key={i.id}>
+                    {i.quantity}× {i.product_name} — {brl(i.unit_price)}
+                  </li>
+                ))}
               </ul>
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3 text-sm">
                 <div>
-                  {Number(o.discount) > 0 && <span className="mr-3 text-muted-foreground">Desconto: {brl(o.discount)}</span>}
+                  {Number(o.discount) > 0 && (
+                    <span className="mr-3 text-muted-foreground">Desconto: {brl(o.discount)}</span>
+                  )}
                   <span className="font-semibold">Total: {brl(o.total)}</span>
-                  {o.payment_method && <span className="ml-3 text-muted-foreground">via {o.payment_method}</span>}
+                  {o.payment_method && (
+                    <span className="ml-3 text-muted-foreground">via {o.payment_method}</span>
+                  )}
                 </div>
-                {o.status === "pendente" && <Button size="sm" variant="hero" onClick={() => payWallet(o.id)}>Pagar com saldo</Button>}
+                {o.status === "pendente" && (
+                  <Button size="sm" variant="hero" onClick={() => payWallet(o.id)}>
+                    Pagar com saldo
+                  </Button>
+                )}
                 {o.deliveries.length > 0 && (
                   <span className="text-xs text-muted-foreground">
-                    Entregas: {o.deliveries.filter((d) => d.status === "entregue").length}/{o.deliveries.length}
+                    Entregas: {o.deliveries.filter((d) => d.status === "entregue").length}/
+                    {o.deliveries.length}
                   </span>
                 )}
               </div>

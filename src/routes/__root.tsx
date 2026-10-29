@@ -25,8 +25,13 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-brand text-7xl font-bold">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Página não encontrada</h2>
-        <p className="mt-2 text-sm text-muted-foreground">A página que você procura não existe ou foi movida.</p>
-        <Link to="/" className="mt-6 inline-flex rounded-xl bg-brand px-4 py-2 text-sm font-medium text-primary-foreground">
+        <p className="mt-2 text-sm text-muted-foreground">
+          A página que você procura não existe ou foi movida.
+        </p>
+        <Link
+          to="/"
+          className="mt-6 inline-flex rounded-xl bg-brand px-4 py-2 text-sm font-medium text-primary-foreground"
+        >
           Voltar ao início
         </Link>
       </div>
@@ -66,7 +71,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "theme-color", content: "#0b1230" },
       { title: "NexaTools — Ferramentas digitais" },
-      { name: "description", content: "Automação, IA, marketing e ferramentas digitais em um só lugar." },
+      {
+        name: "description",
+        content: "Automação, IA, marketing e ferramentas digitais em um só lugar.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -77,7 +85,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,

@@ -18,6 +18,7 @@ export const statusLabel: Record<string, string> = {
 };
 
 export function errMsg(e: unknown): string {
-  if (e && typeof e === "object" && "message" in e) return String((e as { message: string }).message);
+  if (e && typeof e === "object" && "message" in e)
+    return String((e as { message: string }).message);
   return "Algo deu errado. Tente novamente.";
 }

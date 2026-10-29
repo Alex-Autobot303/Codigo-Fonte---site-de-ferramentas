@@ -13,7 +13,10 @@ function Favs() {
     queryKey: ["favs", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data: f } = await supabase.from("favorites").select("product_id").eq("user_id", user!.id);
+      const { data: f } = await supabase
+        .from("favorites")
+        .select("product_id")
+        .eq("user_id", user!.id);
       const ids = (f ?? []).map((x) => x.product_id);
       if (!ids.length) return [];
       const { data } = await supabase.from("products").select(PRODUCT_COLS).in("id", ids);
@@ -23,8 +26,14 @@ function Favs() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">Favoritos</h1>
-      {data.length === 0 ? <p className="text-muted-foreground">Você ainda não favoritou produtos.</p> : (
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{data.map((p) => <ProductCard key={p.id} p={p} />)}</div>
+      {data.length === 0 ? (
+        <p className="text-muted-foreground">Você ainda não favoritou produtos.</p>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {data.map((p) => (
+            <ProductCard key={p.id} p={p} />
+          ))}
+        </div>
       )}
     </div>
   );

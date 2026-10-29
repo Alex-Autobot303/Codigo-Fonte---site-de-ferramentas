@@ -16,12 +16,18 @@ function Overview() {
         supabase.from("wallets").select("balance").maybeSingle(),
         supabase.from("orders").select("id, total, status").eq("user_id", user!.id),
         supabase.from("deliveries").select("id").eq("user_id", user!.id).eq("status", "entregue"),
-        supabase.from("support_tickets").select("id").eq("user_id", user!.id).neq("status", "fechado"),
+        supabase
+          .from("support_tickets")
+          .select("id")
+          .eq("user_id", user!.id)
+          .neq("status", "fechado"),
       ]);
       return {
         balance: Number(w.data?.balance ?? 0),
         orders: o.data?.length ?? 0,
-        spent: (o.data ?? []).filter((x) => ["pago", "entregue"].includes(x.status)).reduce((s, x) => s + Number(x.total), 0),
+        spent: (o.data ?? [])
+          .filter((x) => ["pago", "entregue"].includes(x.status))
+          .reduce((s, x) => s + Number(x.total), 0),
         deliveries: d.data?.length ?? 0,
         tickets: t.data?.length ?? 0,
       };
@@ -36,11 +42,17 @@ function Overview() {
   ] as const;
   return (
     <div>
-      <h1 className="text-2xl font-bold">Olá{user?.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}!</h1>
+      <h1 className="text-2xl font-bold">
+        Olá{user?.user_metadata?.full_name ? `, ${user.user_metadata.full_name}` : ""}!
+      </h1>
       <p className="text-sm text-muted-foreground">{user?.email}</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {cards.map((c) => (
-          <Link key={c.l} to={c.to} className="rounded-2xl border border-border bg-card-grad p-5 transition hover:border-primary/60">
+          <Link
+            key={c.l}
+            to={c.to}
+            className="rounded-2xl border border-border bg-card-grad p-5 transition hover:border-primary/60"
+          >
             <div className="text-sm text-muted-foreground">{c.l}</div>
             <div className="mt-1 font-display text-2xl font-bold">{c.v}</div>
           </Link>

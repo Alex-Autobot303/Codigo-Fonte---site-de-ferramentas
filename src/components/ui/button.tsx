@@ -17,7 +17,8 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         hero: "bg-brand text-primary-foreground shadow-glow hover:brightness-110 rounded-xl font-semibold",
-        glass: "border border-border bg-card/60 backdrop-blur text-foreground hover:bg-accent rounded-xl",
+        glass:
+          "border border-border bg-card/60 backdrop-blur text-foreground hover:bg-accent rounded-xl",
       },
       size: {
         default: "h-9 px-4 py-2",

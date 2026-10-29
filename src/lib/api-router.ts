@@ -1,4 +1,9 @@
-import { checkRateLimit, hashApiKey, isSafeWebhookUrl, generateWebhookSignature } from "./b2b-security";
+import {
+  checkRateLimit,
+  hashApiKey,
+  isSafeWebhookUrl,
+  generateWebhookSignature,
+} from "./b2b-security";
 import { openApiSpecification } from "./openapi-spec";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -15,7 +20,17 @@ export interface ResellerContext {
 
 // In-memory fallback state store for local dev / testing or when DB migrations are syncing
 export const fallbackStore = {
-  resellers: new Map<string, { id: string; userId: string; status: string; companyName: string; webhookUrl?: string; webhookSecret?: string }>([
+  resellers: new Map<
+    string,
+    {
+      id: string;
+      userId: string;
+      status: string;
+      companyName: string;
+      webhookUrl?: string;
+      webhookSecret?: string;
+    }
+  >([
     [
       "res_demo_1",
       {
@@ -28,7 +43,18 @@ export const fallbackStore = {
       },
     ],
   ]),
-  apiKeys: new Map<string, { id: string; resellerId: string; keyHash: string; keyPrefix: string; status: string; permissions: string[]; rateLimit: number }>([
+  apiKeys: new Map<
+    string,
+    {
+      id: string;
+      resellerId: string;
+      keyHash: string;
+      keyPrefix: string;
+      status: string;
+      permissions: string[];
+      rateLimit: number;
+    }
+  >([
     [
       hashApiKey("ak_live_test_valid_key_12345"),
       {
@@ -37,7 +63,13 @@ export const fallbackStore = {
         keyHash: hashApiKey("ak_live_test_valid_key_12345"),
         keyPrefix: "ak_live_test...12345",
         status: "active",
-        permissions: ["read:products", "read:wallet", "write:orders", "read:orders", "read:deliveries"],
+        permissions: [
+          "read:products",
+          "read:wallet",
+          "write:orders",
+          "read:orders",
+          "read:deliveries",
+        ],
         rateLimit: 60,
       },
     ],
@@ -120,7 +152,11 @@ export const fallbackStore = {
 };
 
 // Response helper
-function jsonResponse(data: unknown, status: number = 200, headers: Record<string, string> = {}): Response {
+function jsonResponse(
+  data: unknown,
+  status: number = 200,
+  headers: Record<string, string> = {},
+): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
@@ -134,7 +170,9 @@ function jsonResponse(data: unknown, status: number = 200, headers: Record<strin
 }
 
 // Authentication resolver
-async function authenticateRequest(request: Request): Promise<{ error?: Response; context?: ResellerContext }> {
+async function authenticateRequest(
+  request: Request,
+): Promise<{ error?: Response; context?: ResellerContext }> {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return {
@@ -167,9 +205,12 @@ async function authenticateRequest(request: Request): Promise<{ error?: Response
 
   // 1. Try querying Supabase
   try {
-    const { data: keyData, error: keyErr } = await (supabase
-      .from("reseller_api_keys" as any) as any)
-      .select("id, reseller_id, key_prefix, status, permissions, rate_limit, reseller_accounts(id, user_id, status, company_name)")
+    const { data: keyData, error: keyErr } = await (
+      supabase.from("reseller_api_keys" as any) as any
+    )
+      .select(
+        "id, reseller_id, key_prefix, status, permissions, rate_limit, reseller_accounts(id, user_id, status, company_name)",
+      )
       .eq("key_hash", keyHash)
       .maybeSingle();
 
@@ -179,7 +220,11 @@ async function authenticateRequest(request: Request): Promise<{ error?: Response
       if (keyRecord.status !== "active") {
         return {
           error: jsonResponse(
-            { success: false, error: "Esta API Key foi revogada e não pode mais ser utilizada.", code: "KEY_REVOKED" },
+            {
+              success: false,
+              error: "Esta API Key foi revogada e não pode mais ser utilizada.",
+              code: "KEY_REVOKED",
+            },
             403,
           ),
         };
@@ -189,7 +234,11 @@ async function authenticateRequest(request: Request): Promise<{ error?: Response
       if (!account || account.status !== "active") {
         return {
           error: jsonResponse(
-            { success: false, error: "A conta de revendedor associada a esta chave está suspensa ou inativa.", code: "ACCOUNT_SUSPENDED" },
+            {
+              success: false,
+              error: "A conta de revendedor associada a esta chave está suspensa ou inativa.",
+              code: "ACCOUNT_SUSPENDED",
+            },
             403,
           ),
         };
@@ -234,7 +283,11 @@ async function authenticateRequest(request: Request): Promise<{ error?: Response
     if (!reseller || reseller.status !== "active") {
       return {
         error: jsonResponse(
-          { success: false, error: "Conta de revendedor inativa ou suspensa.", code: "ACCOUNT_INACTIVE" },
+          {
+            success: false,
+            error: "Conta de revendedor inativa ou suspensa.",
+            code: "ACCOUNT_INACTIVE",
+          },
           403,
         ),
       };
@@ -294,7 +347,10 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
   const endpoint = path.replace("/api/v1", "") || "/";
 
   // Rate Limiting
-  const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("cf-connecting-ip") || "anonymous";
+  const clientIp =
+    request.headers.get("x-forwarded-for") ||
+    request.headers.get("cf-connecting-ip") ||
+    "anonymous";
   const authHeader = request.headers.get("Authorization");
   const rateLimitKey = authHeader ? hashApiKey(authHeader) : clientIp;
   const { allowed, remaining, resetInSec } = checkRateLimit(rateLimitKey, 60);
@@ -303,7 +359,8 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     return jsonResponse(
       {
         success: false,
-        error: "Limite de requisições excedido (Rate Limit: 60 req/min). Aguarde antes de tentar novamente.",
+        error:
+          "Limite de requisições excedido (Rate Limit: 60 req/min). Aguarde antes de tentar novamente.",
         code: "RATE_LIMIT_EXCEEDED",
         retry_after: resetInSec,
       },
@@ -357,7 +414,9 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
   // Public/semi-public endpoint: /categories
   if (endpoint === "/categories" && request.method === "GET") {
     try {
-      const { data: dbCats } = await supabase.from("categories").select("id, name, slug, description");
+      const { data: dbCats } = await supabase
+        .from("categories")
+        .select("id, name, slug, description");
       if (dbCats && dbCats.length > 0) {
         return respondWithLog(jsonResponse({ success: true, data: dbCats }));
       }
@@ -384,7 +443,9 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     try {
       const { data: dbProds } = await supabase
         .from("products")
-        .select("id, name, slug, price, promo_price, stock, active, delivery_type, short_description, categories(name, slug)")
+        .select(
+          "id, name, slug, price, promo_price, stock, active, delivery_type, short_description, categories(name, slug)",
+        )
         .eq("active", true);
 
       if (dbProds && dbProds.length > 0) {
@@ -401,7 +462,8 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
 
         const items = dbProds.map((p: any) => {
           const customPrice = priceMap.get(p.id);
-          const b2bCostPrice = customPrice !== undefined ? customPrice : Number(p.promo_price || p.price);
+          const b2bCostPrice =
+            customPrice !== undefined ? customPrice : Number(p.promo_price || p.price);
           return {
             id: p.id,
             name: p.name,
@@ -418,7 +480,11 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
           };
         });
 
-        return respondWithLog(jsonResponse({ success: true, data: items }), ctx.resellerId, ctx.apiKeyId);
+        return respondWithLog(
+          jsonResponse({ success: true, data: items }),
+          ctx.resellerId,
+          ctx.apiKeyId,
+        );
       }
     } catch {}
 
@@ -432,7 +498,11 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
       };
     });
 
-    return respondWithLog(jsonResponse({ success: true, data: items }), ctx.resellerId, ctx.apiKeyId);
+    return respondWithLog(
+      jsonResponse({ success: true, data: items }),
+      ctx.resellerId,
+      ctx.apiKeyId,
+    );
   }
 
   // 2. GET /products/:id
@@ -444,7 +514,9 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     try {
       const { data } = await supabase
         .from("products")
-        .select("id, name, slug, price, promo_price, stock, active, delivery_type, description, short_description, categories(name, slug)")
+        .select(
+          "id, name, slug, price, promo_price, stock, active, delivery_type, description, short_description, categories(name, slug)",
+        )
         .or(`id.eq.${prodId},slug.eq.${prodId}`)
         .maybeSingle();
       if (data) {
@@ -499,12 +571,20 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     const prodId = stockMatch[1];
     let foundProd: any = fallbackStore.products.find((p) => p.id === prodId || p.slug === prodId);
     try {
-      const { data } = await supabase.from("products").select("id, stock, active, delivery_type").or(`id.eq.${prodId},slug.eq.${prodId}`).maybeSingle();
+      const { data } = await supabase
+        .from("products")
+        .select("id, stock, active, delivery_type")
+        .or(`id.eq.${prodId},slug.eq.${prodId}`)
+        .maybeSingle();
       if (data) foundProd = data;
     } catch {}
 
     if (!foundProd) {
-      return respondWithLog(jsonResponse({ success: false, error: "Produto não encontrado", code: "NOT_FOUND" }, 404), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: false, error: "Produto não encontrado", code: "NOT_FOUND" }, 404),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
 
     return respondWithLog(
@@ -528,16 +608,27 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     const prodId = priceMatch[1];
     let foundProd: any = fallbackStore.products.find((p) => p.id === prodId || p.slug === prodId);
     try {
-      const { data } = await supabase.from("products").select("id, price, promo_price, active").or(`id.eq.${prodId},slug.eq.${prodId}`).maybeSingle();
+      const { data } = await supabase
+        .from("products")
+        .select("id, price, promo_price, active")
+        .or(`id.eq.${prodId},slug.eq.${prodId}`)
+        .maybeSingle();
       if (data) foundProd = data;
     } catch {}
 
     if (!foundProd) {
-      return respondWithLog(jsonResponse({ success: false, error: "Produto não encontrado", code: "NOT_FOUND" }, 404), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: false, error: "Produto não encontrado", code: "NOT_FOUND" }, 404),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
 
     const custom = fallbackStore.customPrices.get(`${ctx.resellerId}:${foundProd.id}`);
-    const finalPrice = custom !== undefined ? custom : (foundProd.price || Number(foundProd.promo_price || foundProd.price));
+    const finalPrice =
+      custom !== undefined
+        ? custom
+        : foundProd.price || Number(foundProd.promo_price || foundProd.price);
 
     return respondWithLog(
       jsonResponse({
@@ -558,7 +649,11 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
   if (endpoint === "/wallet" && request.method === "GET") {
     let currentBalance = 0;
     try {
-      const { data: w } = await supabase.from("wallets").select("balance").eq("user_id", ctx.userId).maybeSingle();
+      const { data: w } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", ctx.userId)
+        .maybeSingle();
       if (w) currentBalance = Number(w.balance);
     } catch {}
 
@@ -608,7 +703,14 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
       const amount = Number(body.amount);
       if (!amount || amount < 1) {
         return respondWithLog(
-          jsonResponse({ success: false, error: "Valor de recarga inválido (mínimo R$ 1.00)", code: "INVALID_AMOUNT" }, 422),
+          jsonResponse(
+            {
+              success: false,
+              error: "Valor de recarga inválido (mínimo R$ 1.00)",
+              code: "INVALID_AMOUNT",
+            },
+            422,
+          ),
           ctx.resellerId,
           ctx.apiKeyId,
         );
@@ -641,9 +743,20 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
         });
       } catch {}
 
-      return respondWithLog(jsonResponse({ success: true, data: depositRecord }, 201), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: true, data: depositRecord }, 201),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     } catch (err: any) {
-      return respondWithLog(jsonResponse({ success: false, error: "Corpo da requisição JSON inválido", code: "BAD_REQUEST" }, 400), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse(
+          { success: false, error: "Corpo da requisição JSON inválido", code: "BAD_REQUEST" },
+          400,
+        ),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
   }
 
@@ -653,7 +766,11 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     const depId = depositMatch[1];
     const dep = fallbackStore.deposits.get(depId);
     if (!dep) {
-      return respondWithLog(jsonResponse({ success: false, error: "Recarga não encontrada", code: "NOT_FOUND" }, 404), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: false, error: "Recarga não encontrada", code: "NOT_FOUND" }, 404),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
     return respondWithLog(jsonResponse({ success: true, data: dep }), ctx.resellerId, ctx.apiKeyId);
   }
@@ -664,10 +781,18 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     const depId = simPayMatch[1];
     const dep = fallbackStore.deposits.get(depId);
     if (!dep) {
-      return respondWithLog(jsonResponse({ success: false, error: "Recarga não encontrada" }, 404), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: false, error: "Recarga não encontrada" }, 404),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
     if (dep.status === "paid") {
-      return respondWithLog(jsonResponse({ success: true, data: dep, message: "Depósito já estava creditado" }), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: true, data: dep, message: "Depósito já estava creditado" }),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
     dep.status = "paid";
     dep.paid_at = new Date().toISOString();
@@ -686,7 +811,11 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
       createdAt: new Date().toISOString(),
     });
 
-    return respondWithLog(jsonResponse({ success: true, data: dep, balance: w.balance }), ctx.resellerId, ctx.apiKeyId);
+    return respondWithLog(
+      jsonResponse({ success: true, data: dep, balance: w.balance }),
+      ctx.resellerId,
+      ctx.apiKeyId,
+    );
   }
 
   // 9. POST /orders: Comprar com débito em carteira e idempotência
@@ -711,7 +840,14 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
 
       if (!product_id) {
         return respondWithLog(
-          jsonResponse({ success: false, error: "O campo 'product_id' é obrigatório", code: "VALIDATION_ERROR" }, 422),
+          jsonResponse(
+            {
+              success: false,
+              error: "O campo 'product_id' é obrigatório",
+              code: "VALIDATION_ERROR",
+            },
+            422,
+          ),
           ctx.resellerId,
           ctx.apiKeyId,
         );
@@ -720,16 +856,29 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
       const qty = parseInt(quantity, 10);
       if (isNaN(qty) || qty < 1 || qty > 50) {
         return respondWithLog(
-          jsonResponse({ success: false, error: "Quantidade inválida (deve ser entre 1 e 50)", code: "INVALID_QUANTITY" }, 422),
+          jsonResponse(
+            {
+              success: false,
+              error: "Quantidade inválida (deve ser entre 1 e 50)",
+              code: "INVALID_QUANTITY",
+            },
+            422,
+          ),
           ctx.resellerId,
           ctx.apiKeyId,
         );
       }
 
       // Check product
-      let product = fallbackStore.products.find((p) => p.id === product_id || p.slug === product_id);
+      let product = fallbackStore.products.find(
+        (p) => p.id === product_id || p.slug === product_id,
+      );
       try {
-        const { data: dbP } = await supabase.from("products").select("*").or(`id.eq.${product_id},slug.eq.${product_id}`).maybeSingle();
+        const { data: dbP } = await supabase
+          .from("products")
+          .select("*")
+          .or(`id.eq.${product_id},slug.eq.${product_id}`)
+          .maybeSingle();
         if (dbP) {
           product = {
             id: dbP.id,
@@ -749,7 +898,14 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
 
       if (!product || !product.available) {
         return respondWithLog(
-          jsonResponse({ success: false, error: "Produto indisponível ou inativo para venda", code: "PRODUCT_UNAVAILABLE" }, 400),
+          jsonResponse(
+            {
+              success: false,
+              error: "Produto indisponível ou inativo para venda",
+              code: "PRODUCT_UNAVAILABLE",
+            },
+            400,
+          ),
           ctx.resellerId,
           ctx.apiKeyId,
         );
@@ -814,7 +970,8 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
         deliveryContent = `https://downloads.nexatools.com/secure/${product.slug}?token=${Math.random().toString(36).substring(2, 16)}`;
       } else {
         deliveryStatus = "pending";
-        deliveryContent = "Entrega manual: a equipe administrativa foi notificada e processará o pedido.";
+        deliveryContent =
+          "Entrega manual: a equipe administrativa foi notificada e processará o pedido.";
       }
 
       const orderData = {
@@ -874,7 +1031,14 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
       return respondWithLog(jsonResponse(responsePayload, 201), ctx.resellerId, ctx.apiKeyId);
     } catch (err: any) {
       return respondWithLog(
-        jsonResponse({ success: false, error: err.message || "Erro ao processar compra", code: "INTERNAL_ERROR" }, 500),
+        jsonResponse(
+          {
+            success: false,
+            error: err.message || "Erro ao processar compra",
+            code: "INTERNAL_ERROR",
+          },
+          500,
+        ),
         ctx.resellerId,
         ctx.apiKeyId,
       );
@@ -887,7 +1051,11 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
       .filter((o) => o.resellerId === ctx.resellerId)
       .map(({ delivery_content, resellerId, ...rest }) => rest);
 
-    return respondWithLog(jsonResponse({ success: true, data: list }), ctx.resellerId, ctx.apiKeyId);
+    return respondWithLog(
+      jsonResponse({ success: true, data: list }),
+      ctx.resellerId,
+      ctx.apiKeyId,
+    );
   }
 
   // 11. GET /orders/:id
@@ -896,10 +1064,18 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     const ordId = singleOrderMatch[1];
     const ord = fallbackStore.orders.get(ordId);
     if (!ord || ord.resellerId !== ctx.resellerId) {
-      return respondWithLog(jsonResponse({ success: false, error: "Pedido não encontrado", code: "NOT_FOUND" }, 404), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: false, error: "Pedido não encontrado", code: "NOT_FOUND" }, 404),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
     const { delivery_content, resellerId, ...rest } = ord;
-    return respondWithLog(jsonResponse({ success: true, data: rest }), ctx.resellerId, ctx.apiKeyId);
+    return respondWithLog(
+      jsonResponse({ success: true, data: rest }),
+      ctx.resellerId,
+      ctx.apiKeyId,
+    );
   }
 
   // 12. GET /orders/:id/delivery: Consultar chave de licença / links
@@ -908,7 +1084,11 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     const ordId = deliveryMatch[1];
     const ord = fallbackStore.orders.get(ordId);
     if (!ord || ord.resellerId !== ctx.resellerId) {
-      return respondWithLog(jsonResponse({ success: false, error: "Pedido não encontrado", code: "NOT_FOUND" }, 404), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: false, error: "Pedido não encontrado", code: "NOT_FOUND" }, 404),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
 
     return respondWithLog(
@@ -939,7 +1119,11 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     const ordId = refundMatch[1];
     const ord = fallbackStore.orders.get(ordId);
     if (!ord || ord.resellerId !== ctx.resellerId) {
-      return respondWithLog(jsonResponse({ success: false, error: "Pedido não encontrado", code: "NOT_FOUND" }, 404), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse({ success: false, error: "Pedido não encontrado", code: "NOT_FOUND" }, 404),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
 
     // Check if duplicate refund request
@@ -965,7 +1149,14 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     const body = await request.json().catch(() => ({}));
     if (!body.reason || body.reason.trim().length < 5) {
       return respondWithLog(
-        jsonResponse({ success: false, error: "Informe o motivo detalhado do reembolso (mínimo 5 caracteres)", code: "INVALID_REASON" }, 422),
+        jsonResponse(
+          {
+            success: false,
+            error: "Informe o motivo detalhado do reembolso (mínimo 5 caracteres)",
+            code: "INVALID_REASON",
+          },
+          422,
+        ),
         ctx.resellerId,
         ctx.apiKeyId,
       );
@@ -989,7 +1180,8 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
         {
           success: true,
           data: refundRecord,
-          message: "Solicitação de reembolso registrada com sucesso. Ela será avaliada pela equipe administrativa.",
+          message:
+            "Solicitação de reembolso registrada com sucesso. Ela será avaliada pela equipe administrativa.",
         },
         201,
       ),
@@ -1018,14 +1210,24 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
   if (endpoint === "/webhooks" && request.method === "POST") {
     const body = await request.json().catch(() => ({}));
     if (!body.url) {
-      return respondWithLog(jsonResponse({ success: false, error: "A URL é obrigatória", code: "VALIDATION_ERROR" }, 422), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse(
+          { success: false, error: "A URL é obrigatória", code: "VALIDATION_ERROR" },
+          422,
+        ),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
 
     // SSRF Validation
     const ssrfCheck = isSafeWebhookUrl(body.url);
     if (!ssrfCheck.valid) {
       return respondWithLog(
-        jsonResponse({ success: false, error: ssrfCheck.reason, code: "SECURITY_URL_BLOCKED" }, 400),
+        jsonResponse(
+          { success: false, error: ssrfCheck.reason, code: "SECURITY_URL_BLOCKED" },
+          400,
+        ),
         ctx.resellerId,
         ctx.apiKeyId,
       );
@@ -1039,7 +1241,8 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
     };
 
     r.webhookUrl = body.url;
-    r.webhookSecret = body.secret || r.webhookSecret || `whsec_${Math.random().toString(36).substring(2, 16)}`;
+    r.webhookSecret =
+      body.secret || r.webhookSecret || `whsec_${Math.random().toString(36).substring(2, 16)}`;
     fallbackStore.resellers.set(ctx.resellerId, r);
 
     return respondWithLog(
@@ -1048,7 +1251,8 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
         data: {
           url: r.webhookUrl,
           secret: r.webhookSecret,
-          message: "Webhook configurado com sucesso! Utilize o segredo para validar o cabeçalho X-Reseller-Signature.",
+          message:
+            "Webhook configurado com sucesso! Utilize o segredo para validar o cabeçalho X-Reseller-Signature.",
         },
       }),
       ctx.resellerId,
@@ -1060,7 +1264,18 @@ export async function handleB2BApiRequest(request: Request): Promise<Response | 
   if (endpoint === "/webhooks/test" && request.method === "POST") {
     const r = fallbackStore.resellers.get(ctx.resellerId);
     if (!r?.webhookUrl) {
-      return respondWithLog(jsonResponse({ success: false, error: "Nenhum webhook cadastrado para teste", code: "NO_WEBHOOK_CONFIGURED" }, 400), ctx.resellerId, ctx.apiKeyId);
+      return respondWithLog(
+        jsonResponse(
+          {
+            success: false,
+            error: "Nenhum webhook cadastrado para teste",
+            code: "NO_WEBHOOK_CONFIGURED",
+          },
+          400,
+        ),
+        ctx.resellerId,
+        ctx.apiKeyId,
+      );
     }
 
     const testPayload = JSON.stringify({

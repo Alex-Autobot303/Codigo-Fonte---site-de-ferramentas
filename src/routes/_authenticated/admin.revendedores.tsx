@@ -76,7 +76,9 @@ function AdminResellersPage() {
     r.status = r.status === "active" ? "suspended" : "active";
     fallbackStore.resellers.set(resellerId, r);
     setResellers(Array.from(fallbackStore.resellers.values()));
-    toast.success(`Revendedor ${r.companyName} agora está ${r.status === "active" ? "Ativo" : "Suspenso"}`);
+    toast.success(
+      `Revendedor ${r.companyName} agora está ${r.status === "active" ? "Ativo" : "Suspenso"}`,
+    );
   };
 
   const handleCreateReseller = (e: React.FormEvent) => {
@@ -125,14 +127,21 @@ function AdminResellersPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-violet/20 px-3 py-1 text-xs font-semibold text-violet">Admin B2B</span>
-            <span className={`text-xs font-semibold ${apiActive ? "text-emerald-400" : "text-red-400"}`}>
+            <span className="rounded-full bg-violet/20 px-3 py-1 text-xs font-semibold text-violet">
+              Admin B2B
+            </span>
+            <span
+              className={`text-xs font-semibold ${apiActive ? "text-emerald-400" : "text-red-400"}`}
+            >
               {apiActive ? "● API REST Ativa" : "○ API em Manutenção"}
             </span>
           </div>
-          <h1 className="mt-2 font-display text-2xl font-bold lg:text-3xl">🔌 API B2B — REVENDEDORES</h1>
+          <h1 className="mt-2 font-display text-2xl font-bold lg:text-3xl">
+            🔌 API B2B — REVENDEDORES
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Painel de controle central de parceiros revendedores, catálogos B2B, chaves criptográficas e auditoria de tráfego.
+            Painel de controle central de parceiros revendedores, catálogos B2B, chaves
+            criptográficas e auditoria de tráfego.
           </p>
         </div>
 
@@ -230,13 +239,19 @@ function AdminResellersPage() {
                       <td className="p-4 font-semibold text-foreground">{r.companyName}</td>
                       <td className="p-4 font-mono text-xs text-muted-foreground">{r.id}</td>
                       <td className="p-4">
-                        <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                          r.status === "active" ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400"
-                        }`}>
+                        <span
+                          className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                            r.status === "active"
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : "bg-red-500/15 text-red-400"
+                          }`}
+                        >
                           {r.status === "active" ? "Ativo" : "Suspenso"}
                         </span>
                       </td>
-                      <td className="p-4 font-mono font-bold text-emerald-400">R$ {balance.toFixed(2)}</td>
+                      <td className="p-4 font-mono font-bold text-emerald-400">
+                        R$ {balance.toFixed(2)}
+                      </td>
                       <td className="p-4 text-xs font-mono text-muted-foreground truncate max-w-xs">
                         {r.webhookUrl || "Não configurado"}
                       </td>
@@ -291,8 +306,12 @@ function AdminResellersPage() {
                       <td className="p-4 font-semibold">{p.name}</td>
                       <td className="p-4 text-xs text-muted-foreground">{p.category}</td>
                       <td className="p-4 font-mono">R$ {p.retail_price.toFixed(2)}</td>
-                      <td className="p-4 font-mono font-bold text-emerald-400">R$ {p.price.toFixed(2)}</td>
-                      <td className="p-4 font-mono text-violet font-semibold">+ R$ {profit.toFixed(2)}</td>
+                      <td className="p-4 font-mono font-bold text-emerald-400">
+                        R$ {p.price.toFixed(2)}
+                      </td>
+                      <td className="p-4 font-mono text-violet font-semibold">
+                        + R$ {profit.toFixed(2)}
+                      </td>
                       <td className="p-4 text-right">
                         <button
                           onClick={() => {
@@ -317,7 +336,9 @@ function AdminResellersPage() {
               <div className="w-full max-w-md rounded-3xl border border-border bg-slate-950 p-6 shadow-2xl space-y-4">
                 <h3 className="font-bold text-lg">Alterar Preço B2B: {editingProduct.name}</h3>
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">Preço de Custo B2B (R$)</label>
+                  <label className="text-xs font-semibold text-muted-foreground">
+                    Preço de Custo B2B (R$)
+                  </label>
                   <input
                     type="number"
                     value={newB2BPrice}
@@ -367,9 +388,13 @@ function AdminResellersPage() {
                     <td className="p-4 text-slate-300">{k.keyPrefix}</td>
                     <td className="p-4 font-sans text-muted-foreground">{k.resellerId}</td>
                     <td className="p-4">
-                      <span className={`rounded px-2 py-0.5 text-[10px] font-bold ${
-                        k.status === "active" ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400"
-                      }`}>
+                      <span
+                        className={`rounded px-2 py-0.5 text-[10px] font-bold ${
+                          k.status === "active"
+                            ? "bg-emerald-500/15 text-emerald-400"
+                            : "bg-red-500/15 text-red-400"
+                        }`}
+                      >
                         {k.status}
                       </span>
                     </td>
@@ -410,7 +435,9 @@ function AdminResellersPage() {
               <tbody className="divide-y divide-border font-mono text-xs">
                 {apiLogs.map((l) => (
                   <tr key={l.id} className="hover:bg-card/60 transition">
-                    <td className="p-3 text-muted-foreground">{new Date(l.created_at).toLocaleTimeString()}</td>
+                    <td className="p-3 text-muted-foreground">
+                      {new Date(l.created_at).toLocaleTimeString()}
+                    </td>
                     <td className="p-3 font-sans text-slate-300">{l.reseller_id || "Anônimo"}</td>
                     <td className="p-3 font-bold text-violet">{l.method}</td>
                     <td className="p-3 text-foreground">{l.endpoint}</td>
@@ -433,7 +460,9 @@ function AdminResellersPage() {
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div>
                 <div className="font-semibold text-sm">Habilitar API REST B2B</div>
-                <div className="text-xs text-muted-foreground">Se desativada, todas as chamadas externas retornarão 503 Service Unavailable</div>
+                <div className="text-xs text-muted-foreground">
+                  Se desativada, todas as chamadas externas retornarão 503 Service Unavailable
+                </div>
               </div>
               <input
                 type="checkbox"
@@ -444,7 +473,9 @@ function AdminResellersPage() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-muted-foreground">Limite Padrão de Requisições (por minuto)</label>
+              <label className="text-xs font-semibold text-muted-foreground">
+                Limite Padrão de Requisições (por minuto)
+              </label>
               <input
                 type="number"
                 value={defaultRateLimit}
@@ -454,7 +485,9 @@ function AdminResellersPage() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-muted-foreground">Depósito Mínimo para Recarga PIX (R$)</label>
+              <label className="text-xs font-semibold text-muted-foreground">
+                Depósito Mínimo para Recarga PIX (R$)
+              </label>
               <input
                 type="number"
                 value={minDeposit}
@@ -476,10 +509,15 @@ function AdminResellersPage() {
       {/* Modal Add Reseller */}
       {showAddReseller && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-          <form onSubmit={handleCreateReseller} className="w-full max-w-md rounded-3xl border border-border bg-slate-950 p-6 shadow-2xl space-y-4">
+          <form
+            onSubmit={handleCreateReseller}
+            className="w-full max-w-md rounded-3xl border border-border bg-slate-950 p-6 shadow-2xl space-y-4"
+          >
             <h3 className="font-bold text-lg">Cadastrar Novo Revendedor B2B</h3>
             <div>
-              <label className="text-xs font-semibold text-muted-foreground">Nome da Empresa / Parceiro</label>
+              <label className="text-xs font-semibold text-muted-foreground">
+                Nome da Empresa / Parceiro
+              </label>
               <input
                 value={newResellerName}
                 onChange={(e) => setNewResellerName(e.target.value)}

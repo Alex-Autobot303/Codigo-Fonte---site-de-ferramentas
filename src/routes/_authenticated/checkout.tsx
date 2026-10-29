@@ -11,7 +11,12 @@ import { useAuth } from "@/lib/auth";
 import { brl, errMsg } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/checkout")({
-  head: () => ({ meta: [{ title: "Checkout — NexaTools" }, { name: "description", content: "Finalize seu pedido." }] }),
+  head: () => ({
+    meta: [
+      { title: "Checkout — NexaTools" },
+      { name: "description", content: "Finalize seu pedido." },
+    ],
+  }),
   component: Checkout,
 });
 
@@ -37,7 +42,9 @@ function Checkout() {
     return (
       <div className="mx-auto max-w-xl px-4 py-24 text-center">
         <h1 className="text-2xl font-bold">Nada para finalizar</h1>
-        <Button variant="hero" className="mt-6" asChild><Link to="/produtos">Ver produtos</Link></Button>
+        <Button variant="hero" className="mt-6" asChild>
+          <Link to="/produtos">Ver produtos</Link>
+        </Button>
       </div>
     );
 
@@ -50,7 +57,9 @@ function Checkout() {
       });
       if (error) throw error;
       if (method === "carteira") {
-        const { error: payErr } = await supabase.rpc("pay_order_with_wallet", { _order: orderId as string });
+        const { error: payErr } = await supabase.rpc("pay_order_with_wallet", {
+          _order: orderId as string,
+        });
         if (payErr) {
           clear();
           toast.error(`Pedido criado, mas não pago: ${payErr.message}`);
@@ -71,10 +80,17 @@ function Checkout() {
   };
 
   const opt = (m: Method, Icon: typeof Wallet, title: string, desc: string, disabled = false) => (
-    <button type="button" disabled={disabled} onClick={() => setMethod(m)}
-      className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition disabled:opacity-50 ${method === m ? "border-primary bg-primary/10 shadow-glow" : "border-border bg-card hover:border-primary/50"}`}>
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={() => setMethod(m)}
+      className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition disabled:opacity-50 ${method === m ? "border-primary bg-primary/10 shadow-glow" : "border-border bg-card hover:border-primary/50"}`}
+    >
       <Icon className="mt-0.5 h-5 w-5 text-primary" />
-      <div><div className="font-semibold">{title}</div><div className="text-sm text-muted-foreground">{desc}</div></div>
+      <div>
+        <div className="font-semibold">{title}</div>
+        <div className="text-sm text-muted-foreground">{desc}</div>
+      </div>
     </button>
   );
 
@@ -84,24 +100,58 @@ function Checkout() {
         <h1 className="text-3xl font-bold">Checkout</h1>
         <section className="space-y-3">
           <h2 className="font-semibold">Forma de pagamento</h2>
-          {opt("carteira", Wallet, `Saldo da carteira (${brl(balance)})`, balance >= subtotal ? "Pagamento instantâneo com seu saldo." : "Saldo pode ser insuficiente — recarregue em Minha carteira.")}
-          {opt("pix", QrCode, "PIX via Mercado Pago", "Em configuração — disponível assim que a loja conectar o Mercado Pago.", true)}
-          {opt("cartao", CreditCard, "Cartão de crédito via Mercado Pago", "Em configuração — disponível assim que a loja conectar o Mercado Pago.", true)}
+          {opt(
+            "carteira",
+            Wallet,
+            `Saldo da carteira (${brl(balance)})`,
+            balance >= subtotal
+              ? "Pagamento instantâneo com seu saldo."
+              : "Saldo pode ser insuficiente — recarregue em Minha carteira.",
+          )}
+          {opt(
+            "pix",
+            QrCode,
+            "PIX via Mercado Pago",
+            "Em configuração — disponível assim que a loja conectar o Mercado Pago.",
+            true,
+          )}
+          {opt(
+            "cartao",
+            CreditCard,
+            "Cartão de crédito via Mercado Pago",
+            "Em configuração — disponível assim que a loja conectar o Mercado Pago.",
+            true,
+          )}
         </section>
         <section className="space-y-2">
           <h2 className="font-semibold">Cupom de desconto</h2>
-          <Input value={coupon} onChange={(e) => setCoupon(e.target.value.toUpperCase())} placeholder="Digite seu cupom (validado ao confirmar)" className="max-w-sm" />
+          <Input
+            value={coupon}
+            onChange={(e) => setCoupon(e.target.value.toUpperCase())}
+            placeholder="Digite seu cupom (validado ao confirmar)"
+            className="max-w-sm"
+          />
         </section>
       </div>
       <aside className="h-fit rounded-2xl border border-border bg-card-grad p-6">
         <h2 className="text-lg font-bold">Resumo do pedido</h2>
         <ul className="mt-4 space-y-2 text-sm">
           {items.map((i) => (
-            <li key={i.product_id} className="flex justify-between gap-3"><span className="text-muted-foreground">{i.quantity}× {i.name}</span><span>{brl(i.unit_price * i.quantity)}</span></li>
+            <li key={i.product_id} className="flex justify-between gap-3">
+              <span className="text-muted-foreground">
+                {i.quantity}× {i.name}
+              </span>
+              <span>{brl(i.unit_price * i.quantity)}</span>
+            </li>
           ))}
         </ul>
-        <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold"><span>Subtotal</span><span>{brl(subtotal)}</span></div>
-        <p className="mt-1 text-xs text-muted-foreground">Desconto do cupom e total final são calculados no servidor.</p>
+        <div className="mt-4 flex justify-between border-t border-border pt-4 font-semibold">
+          <span>Subtotal</span>
+          <span>{brl(subtotal)}</span>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Desconto do cupom e total final são calculados no servidor.
+        </p>
         <Button variant="hero" size="lg" className="mt-6 w-full" disabled={busy} onClick={submit}>
           {busy ? "Processando..." : "Confirmar pedido"}
         </Button>

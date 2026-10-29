@@ -14,7 +14,9 @@ function AdminSupport() {
   const [open, setOpen] = useState<string | null>(null);
   const { data = [] } = useQuery({
     queryKey: ["tickets", "admin"],
-    queryFn: async () => (await supabase.from("support_tickets").select("*").order("updated_at", { ascending: false })).data ?? [],
+    queryFn: async () =>
+      (await supabase.from("support_tickets").select("*").order("updated_at", { ascending: false }))
+        .data ?? [],
   });
   const close = async (id: string) => {
     await supabase.from("support_tickets").update({ status: "fechado" }).eq("id", id);
@@ -30,14 +32,24 @@ function AdminSupport() {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <button className="text-left" onClick={() => setOpen(open === t.id ? null : t.id)}>
                 <div className="font-semibold">{t.subject}</div>
-                <div className="text-xs text-muted-foreground">{t.protocol} · {t.category} · {dateBR(t.created_at)}</div>
+                <div className="text-xs text-muted-foreground">
+                  {t.protocol} · {t.category} · {dateBR(t.created_at)}
+                </div>
               </button>
               <div className="flex items-center gap-2">
                 <StatusBadge s={t.status} />
-                {t.status !== "fechado" && <Button size="sm" variant="ghost" onClick={() => close(t.id)}>Fechar</Button>}
+                {t.status !== "fechado" && (
+                  <Button size="sm" variant="ghost" onClick={() => close(t.id)}>
+                    Fechar
+                  </Button>
+                )}
               </div>
             </div>
-            {open === t.id && <div className="mt-4 border-t border-border pt-4"><TicketThread ticketId={t.id} staff /></div>}
+            {open === t.id && (
+              <div className="mt-4 border-t border-border pt-4">
+                <TicketThread ticketId={t.id} staff />
+              </div>
+            )}
           </div>
         ))}
       </div>
