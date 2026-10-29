@@ -42,17 +42,6 @@ export function SiteHeader() {
 
   const navLinks = (
     <>
-      <Link
-        to="/developers"
-        className="flex items-center gap-1.5 text-violet hover:text-primary font-medium"
-      >
-        <span className="rounded bg-violet/15 px-1.5 py-0.5 text-[10px] font-bold">API</span> B2B
-      </Link>
-      {user && (
-        <Link to="/revendedor" className="flex items-center gap-2 hover:text-primary">
-          Área do Revendedor
-        </Link>
-      )}
       <Link to="/conta" className="flex items-center gap-2 hover:text-primary">
         <User className="h-4 w-4" />
         {user ? "Minha conta" : "Entrar"}

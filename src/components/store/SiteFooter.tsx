@@ -56,23 +56,8 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h4 className="mb-3 text-sm font-semibold">Institucional & B2B</h4>
+          <h4 className="mb-3 text-sm font-semibold">Institucional</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>
-              <Link to="/developers" className="text-violet font-medium hover:text-primary">
-                API B2B (Revenda)
-              </Link>
-            </li>
-            <li>
-              <Link to="/developers/docs" className="hover:text-primary">
-                Documentação da API
-              </Link>
-            </li>
-            <li>
-              <Link to="/revendedor" className="hover:text-primary">
-                Painel do Revendedor
-              </Link>
-            </li>
             <li>
               <Link to="/termos" className="hover:text-primary">
                 Termos de uso
@@ -81,6 +66,11 @@ export function SiteFooter() {
             <li>
               <Link to="/privacidade" className="hover:text-primary">
                 Política de privacidade (LGPD)
+              </Link>
+            </li>
+            <li>
+              <Link to="/conta/suporte" className="hover:text-primary">
+                Central de suporte
               </Link>
             </li>
           </ul>

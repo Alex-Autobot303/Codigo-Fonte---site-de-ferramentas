@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   AlertCircle,
   ArrowRight,
@@ -18,6 +19,18 @@ import {
 import { openApiSpecification } from "@/lib/openapi-spec";
 
 export const Route = createFileRoute("/developers/docs")({
+  ssr: false,
+  beforeLoad: async ({ location }) => {
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (!data?.user) {
+        throw redirect({ to: "/auth", search: { redirect: location.href } });
+      }
+    } catch (e: any) {
+      if (e?.to || e?.isRedirect || e?.status) throw e;
+      throw redirect({ to: "/auth", search: { redirect: location.href } });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Documentação da API B2B — NexaTools" },

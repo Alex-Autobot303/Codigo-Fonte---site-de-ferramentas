@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowRight,
   Bot,
@@ -17,6 +18,18 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/developers")({
+  ssr: false,
+  beforeLoad: async ({ location }) => {
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (!data?.user) {
+        throw redirect({ to: "/auth", search: { redirect: location.href } });
+      }
+    } catch (e: any) {
+      if (e?.to || e?.isRedirect || e?.status) throw e;
+      throw redirect({ to: "/auth", search: { redirect: location.href } });
+    }
+  },
   head: () => ({
     meta: [
       { title: "Portal de Desenvolvedores — NexaTools B2B REST API" },

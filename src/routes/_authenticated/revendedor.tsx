@@ -37,6 +37,7 @@ import {
   getB2BDashboardMetrics,
   generateNewApiKey,
   revokeApiKey,
+  deleteApiKey,
   listApiKeys,
   type ResellerAccount,
   type ResellerApiKey,
@@ -156,6 +157,22 @@ function ResellerDashboardPage() {
     if (ok) {
       toast.success("Chave revogada com sucesso.");
       loadData();
+    }
+  };
+
+  const handleDeleteKey = async (keyId: string) => {
+    if (
+      !confirm("Tem certeza que deseja excluir permanentemente esta chave de API do histórico?")
+    ) {
+      return;
+    }
+    const ok = await deleteApiKey(keyId);
+    if (ok) {
+      toast.success("Chave excluída com sucesso.");
+      setKeys((prev) => prev.filter((k) => k.id !== keyId));
+      loadData();
+    } else {
+      toast.error("Erro ao excluir chave");
     }
   };
 
@@ -577,14 +594,24 @@ function ResellerDashboardPage() {
                       </td>
                       <td className="p-4 font-mono text-xs">{k.rate_limit || 60} req/min</td>
                       <td className="p-4 text-right">
-                        {k.status === "active" && (
+                        <div className="flex items-center justify-end gap-2">
+                          {k.status === "active" && (
+                            <button
+                              onClick={() => handleRevokeKey(k.id)}
+                              className="inline-flex items-center gap-1 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-400 hover:bg-amber-500/20 transition"
+                              title="Desativar chave"
+                            >
+                              <ShieldAlert className="h-3.5 w-3.5" /> Revogar
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleRevokeKey(k.id)}
-                            className="inline-flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-semibold text-red-400 hover:bg-red-500/20"
+                            onClick={() => handleDeleteKey(k.id)}
+                            className="inline-flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition"
+                            title="Excluir permanentemente"
                           >
-                            <Trash2 className="h-3.5 w-3.5" /> Revogar
+                            <Trash2 className="h-3.5 w-3.5" /> Excluir
                           </button>
-                        )}
+                        </div>
                       </td>
                     </tr>
                   ))}

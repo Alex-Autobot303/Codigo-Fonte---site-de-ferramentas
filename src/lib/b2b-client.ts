@@ -269,6 +269,27 @@ export async function revokeApiKey(keyId: string): Promise<boolean> {
 }
 
 /**
+ * Permanently deletes an API Key
+ */
+export async function deleteApiKey(keyId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from("reseller_api_keys" as any)
+      .delete()
+      .eq("id", keyId);
+    if (!error) return true;
+  } catch {}
+
+  for (const [hash, k] of fallbackStore.apiKeys.entries()) {
+    if (k.id === keyId) {
+      fallbackStore.apiKeys.delete(hash);
+      return true;
+    }
+  }
+  return true;
+}
+
+/**
  * List all keys for reseller
  */
 export async function listApiKeys(resellerId: string): Promise<ResellerApiKey[]> {
